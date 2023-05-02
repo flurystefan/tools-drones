@@ -1,0 +1,31 @@
+name: Linting
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Markdown Linting Action
+      uses: avto-dev/markdown-lint@v1
+      with:
+        args: '*.md'
+    
+    - name: Set up Python environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.7"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8
+    - name: Flake8 Lint
+      run: |
+        flake8 .
