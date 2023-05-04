@@ -11,6 +11,7 @@ from argparse import ArgumentParser
 from datetime import datetime as dt
 from pystac_client import Client
 
+
 def setup_logging(folder=None):
     """ Setup logging
 
@@ -66,7 +67,9 @@ def parse_args():
 
 def run():
     """ Main routine """
-    client = Client.open("https://earth-search.aws.element84.com/v0")
+    # client = Client.open("https://earth-search.aws.element84.com/v0")
+    client = Client.open("https://data.geo.admin.ch/api/stac/v0.9")
+    print()
 
 
 if __name__ == "__main__":
