@@ -11,6 +11,7 @@ from io import StringIO
 from argparse import ArgumentParser
 from datetime import datetime as dt
 from pystac_client import Client
+from urllib import request
 
 
 def setup_logging(folder=None, loglevel="INFO"):
@@ -73,16 +74,31 @@ def parse_args():
     return vars(parser.parse_args())
 
 
-def run(cfg, collection, outputpath):
+def run(cfg, key, outputpath):
     """ Main routine """
     # client = Client.open("https://earth-search.aws.element84.com/v0")
     client = Client.open(cfg["STAC_url"])
     logging.info("STAC {}".format(client.description))
-    staccollection = client.get_collection(collection)
-    items = staccollection.get_items()
-    for item in items:
-        logging.info(item.properties["time of data"])
-    logging.info("")
+    collection = client.get_collection(key)
+    items = collection.get_items()
+    sorted_items = sorted(items, key=lambda x: x.datetime, reverse=True)
+    item = sorted_items[0]
+    assets = item.assets
+    first_key, first_value = next(iter(assets.items()))
+
+    filename = first_key
+    url = first_value.href
+    crateted = first_value.extra_fields["created"]
+    crateted = first_value.extra_fields["updated"]
+    epsg = first_value.extra_fields["proj:epsg"]
+    checksum = first_value.extra_fields["checksum:multihash"]
+    file_name = os.path.join(outputpath, filename)
+
+    logging.info("Start to downlaod {} from {}".format(filename, client.description))
+    request.urlretrieve(url, file_name)
+
+    logging.info("Source {}".format(url))
+    logging.info("Output {}".format(file_name))
 
 
 if __name__ == "__main__":
