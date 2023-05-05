@@ -1,0 +1,5 @@
+{
+    "loglevel": "INFO",
+    "STAC_url": "https://data.geo.admin.ch/api/stac/v0.9",
+    "max_items_search": 10
+}
