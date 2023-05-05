@@ -6,6 +6,7 @@ import socket
 import os
 import logging
 import sys
+from getinhabitants import STACAPIInhabitants
 from config import get_config
 from io import StringIO
 from argparse import ArgumentParser
@@ -80,6 +81,10 @@ def run(cfg, key, outputpath):
     client = Client.open(cfg["STAC_url"])
     logging.info("STAC {}".format(client.description))
     collection = client.get_collection(key)
+
+    inh = STACAPIInhabitants(collection)
+
+
     items = collection.get_items()
     sorted_items = sorted(items, key=lambda x: x.datetime, reverse=True)
     item = sorted_items[0]

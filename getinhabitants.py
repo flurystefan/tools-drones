@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-class INHABITANTS():
+import logging
+
+
+class STACInhabitants:
 
     def __init__(self, collection, asset_key, url, created, updated, timeofdata, epsg, checksum):
-        self.collection = collection
+        self.collection_name = collection
         self.asset_key = asset_key
         self.url = url
         self.created = created
@@ -12,8 +15,15 @@ class INHABITANTS():
         self.checksum =checksum
 
 
-class INHABITANTS_STACAPI():
+class STACAPIInhabitants:
+
+    def __init__(self, collection):
+        self.__collection = collection
+        self.__items = self.__collection.get_items()
+        self.__sortet_items = sorted(self.__items, key=lambda x: x.datetime, reverse=True)
+        self.first_item = self.__sortet_items[0]
 
 
-    def __init__(self):
-        pass
+
+    def get_assets_of_first_item(self):
+        assets = self.get_first_item().assets
