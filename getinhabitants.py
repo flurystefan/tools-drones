@@ -1,33 +1,19 @@
 # -*- coding: utf-8 -*-
-import pystac
-import logging
-import sys
-import argparse
+class INHABITANTS():
+
+    def __init__(self, collection, asset_key, url, created, updated, timeofdata, epsg, checksum):
+        self.collection = collection
+        self.asset_key = asset_key
+        self.url = url
+        self.created = created
+        self.updated = updated
+        self.timeofdata = timeofdata
+        self.epsg = epsg
+        self.checksum =checksum
 
 
-def parse_args():
-    pass
+class INHABITANTS_STACAPI():
 
 
-def run():
-    pass
-
-
-if __name__ == "__main__":
-    """ Entrypoint for the application """
-    try:
-        logging.basicConfig(level="INFO")
-        logging.info("Python version {}".format(sys.version))
-    except Exception as _err:
-        logging.fatal("Could not initialise logging. Script will exit.", exc_info=_err)
-        sys.exit(1)
-
-    try:
-        _args = parse_args()
-        run()
-        logging.info("Got file from STAC")
-    except Exception as _err:
-        logging.fatal("Anlayse failed", exc_info=_err)
-        sys.exit(1)
-    finally:
-        logging.shutdown()
+    def __init__(self):
+        pass
