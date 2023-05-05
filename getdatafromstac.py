@@ -6,13 +6,14 @@ import socket
 import os
 import logging
 import sys
+from config import get_config
 from io import StringIO
 from argparse import ArgumentParser
 from datetime import datetime as dt
 from pystac_client import Client
 
 
-def setup_logging(folder=None):
+def setup_logging(folder=None, loglevel="INFO"):
     """ Setup logging
 
     Returns:
@@ -32,8 +33,13 @@ def setup_logging(folder=None):
         if folder is not None:
             handlers.append(logging.FileHandler(filename=os.path.join(folder, filename)))
 
+        logger_levels = {
+            'ERROR': logging.ERROR,
+            'INFO': logging.INFO,
+            'DEBUG': logging.DEBUG
+        }
         logging.basicConfig(
-            level=logging.INFO,
+            level=logger_levels[loglevel],
             format="%(asctime)s [{}] [{}] [%(threadName)s] [%(levelname)s]  %(message)s".format(
                 socket.gethostname(), os.path.basename(sys.argv[0][:-3])
             ),
@@ -55,29 +61,37 @@ def parse_args():
     parser.add_argument(
         "--collection",
         "-c",
+        required=True,
         help="Collection oder layer id auf geo.admin.ch",
     )
     parser.add_argument(
         "--output",
         "-o",
+        required=True,
         help="Output folder",
     )
     return vars(parser.parse_args())
 
 
-def run():
+def run(cfg, collection, outputpath):
     """ Main routine """
     # client = Client.open("https://earth-search.aws.element84.com/v0")
-    client = Client.open("https://data.geo.admin.ch/api/stac/v0.9")
-    print()
+    client = Client.open(cfg["STAC_url"])
+    logging.info("STAC {}".format(client.description))
+    staccollection = client.get_collection(collection)
+    items = staccollection.get_items()
+    for item in items:
+        logging.info(item.properties["time of data"])
+    logging.info("")
 
 
 if __name__ == "__main__":
     _args = parse_args()
-    _log = setup_logging()
+    _cfg = cfg = get_config()
+    _log = setup_logging(loglevel=_cfg["loglevel"])
     logging.info("Python version {0}".format(sys.version))
     try:
-        run()
+        run(_cfg, _args["collection"], _args["output"])
     except Exception as _exc:
         logging.fatal("An error occured executing checkch", exc_info=_exc)
     finally:
