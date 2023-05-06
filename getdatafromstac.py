@@ -83,6 +83,7 @@ def run(cfg, key, outputpath):
     csv = inh.download(outputpath)
     if csv:
         logging.info("File {} downloaded".format(csv))
+    csv = r"D:\git\tools-drones\temp\volkszaehlung-bevoelkerungsstatistik_einwohner_2021_2056.csv"
 
 
 if __name__ == "__main__":
