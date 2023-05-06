@@ -19,6 +19,7 @@ class STACInhabitants:
 
 
 class STACapiInhabitants:
+    CSVHEADERLINE = '"RELI";"E_KOORD";"N_KOORD";"NUMMER";"CLASS"\n'
 
     def __init__(self, collection):
         self.__collection = collection
@@ -46,12 +47,13 @@ class STACapiInhabitants:
                 file_hash = self.__get_filehash(filename)
                 if file_hash == self.stac_inhabitants.checksum:
                     logging.info("File already downloaded and checksum is ok")
-                    return filename
+                    return None
                 else:
                     logging.info("File outdated")
                     os.remove(filename)
                     return self.__download(filename)
             else:
+                logging.info("File not found")
                 return self.__download(filename)
         except Exception as e:
             logging.error("Download failed {}".format(e))
@@ -71,6 +73,18 @@ class STACapiInhabitants:
         file_hash = self.__get_filehash(filename)
         if file_hash == self.stac_inhabitants.checksum:
             logging.info("Download succeeded and checksum ok")
+            with open(filename) as csv:
+                lines = csv.readlines()
+                if lines[0] == self.CSVHEADERLINE:
+                    for idx in range(1, len(lines)):
+                        linarr = lines[idx].split(";")
+                        if len(linarr) != 5 or str(linarr[0]) != "{}{}".format(linarr[1][1:5], linarr[2][1:5]):
+                            logging.error("Error found on line {} in csv".format(idx))
+                            return None
+                    logging.info("Checked {} lines in csv".format(idx))
+                else:
+                    logging.error("CSV Header {} ist not ok ({})".format(lines[0], self.CSVHEADERLINE))
+            logging.info("Schema check ok")
             return filename
         else:
             logging.error("Check checksum failed")
