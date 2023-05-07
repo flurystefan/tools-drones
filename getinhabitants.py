@@ -3,6 +3,8 @@ import logging
 from urllib import request
 import os
 import hashlib
+import simplekml
+import requests
 
 
 class STACInhabitants:
@@ -78,7 +80,9 @@ class STACapiInhabitants:
                 if lines[0] == self.CSVHEADERLINE:
                     for idx in range(1, len(lines)):
                         linarr = lines[idx].split(";")
-                        if len(linarr) != 5 or str(linarr[0]) != "{}{}".format(linarr[1][1:5], linarr[2][1:5]):
+                        if len(linarr) != 5 \
+                                or str(linarr[0]) != "{}{}".format(linarr[1][1:5], linarr[2][1:5]) \
+                                or not linarr[3].isdigit():
                             logging.error("Error found on line {} in csv".format(idx))
                             return None
                     logging.info("Checked {} lines in csv".format(idx))
@@ -91,3 +95,63 @@ class STACapiInhabitants:
             logging.info(file_hash)
             logging.info(self.stac_inhabitants.checksum)
             return None
+
+
+class KmlInhabitants:
+
+    def __init__(self, csv):
+        self.__csv = csv
+        self.kmdict, self.inhabitants = self.__sumkm()
+
+
+    def tokml(self):
+        kml = simplekml.Kml()
+        counter = 0
+        for k, v in self.kmdict.items():
+            if counter % 1000 == 0:
+                logging.info("{} of {}".format(len(self.kmdict), counter))
+            counter += 1
+            polygon = kml.newpolygon(name=k)
+            lbe_lv95 = int("{}000".format(k[:4]))
+            lbn_lv95 = int("{}000".format(k[4:]))
+            try:
+                lbe_wgs, lbn_wgs = self.__towgs84(lbe_lv95, lbn_lv95)
+                lte_wgs, ltn_wgs = self.__towgs84(lbe_lv95 + 1000, lbn_lv95)
+                rte_wgs, rtn_wgs = self.__towgs84(lbe_lv95 + 1000, lbn_lv95 + 1000)
+                rbe_wgs, rbn_wgs = self.__towgs84(lbe_lv95, lbn_lv95 + 1000)
+                polygon.outerboundaryis = [(lbe_wgs, lbn_wgs), (lte_wgs, ltn_wgs), (rte_wgs, rtn_wgs), (rbe_wgs, rbn_wgs)]
+                polygon.style.polystyle.color = simplekml.Color.green
+                polygon.style.polystyle.fill = 1
+                polygon.extended_data = {"Anzahl Einwohner: ": v}
+            except Exception as e:
+                logging.error("{} - {}".format(k, v))
+                logging.error(e)
+        kml.save(r"D:\git\tools-drones\temp\polygon.kml")
+
+    def __towgs84(self, e, n):
+        baseurl = "https://geodesy.geo.admin.ch/reframe/lv95towgs84"
+        for idx in range(5):
+            params = {"easting": e, "northing": n, "format": "json"}
+            response = requests.get(baseurl, params=params)
+            if response.status_code == 200:
+                # Request was successful
+                data = response.json()
+                return data["easting"], data["northing"]
+            else:
+                logging.error("Request failed with status code: {} at {} {} try: {}".format(response.status_code, e, n, idx))
+
+    def __sumkm(self):
+        kmdict = {}
+        inhabitants = 0
+        with open(self.__csv) as csv:
+            lines = csv.readlines()
+            for idx in range(1, len(lines)):
+                linarr = lines[idx].split(";")
+                key = "{}{}".format(linarr[1][:4], linarr[2][:4])
+                val = int(linarr[3])
+                inhabitants += val
+                if key in kmdict:
+                    kmdict[key] += val
+                else:
+                    kmdict[key] = val
+        return kmdict, inhabitants

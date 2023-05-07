@@ -5,7 +5,7 @@ import socket
 import os
 import logging
 import sys
-from getinhabitants import STACapiInhabitants
+from getinhabitants import STACapiInhabitants, KmlInhabitants
 from config import get_config
 from io import StringIO
 from argparse import ArgumentParser
@@ -83,7 +83,10 @@ def run(cfg, key, outputpath):
     csv = inh.download(outputpath)
     if csv:
         logging.info("File {} downloaded".format(csv))
-    csv = r"D:\git\tools-drones\temp\volkszaehlung-bevoelkerungsstatistik_einwohner_2021_2056.csv"
+    csv = r"D:\git\tools-drones\temp\sample.csv"
+    kml = KmlInhabitants(csv)
+    kml.tokml()
+    pass
 
 
 if __name__ == "__main__":
