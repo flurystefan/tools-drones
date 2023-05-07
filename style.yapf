@@ -30,4 +30,4 @@ split_all_top_level_comma_separated_values=True
 
 # Split lines longer than 100 characters (this only applies to code not to
 # comment and docstring)
-column_limit=100
+column_limit=120
