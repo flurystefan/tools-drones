@@ -4,7 +4,8 @@ from urllib import request
 import os
 import hashlib
 import simplekml
-import requests
+from gridcache import CacheKM2WGS
+from config import get_config
 
 
 class STACInhabitants:
@@ -103,42 +104,35 @@ class KmlInhabitants:
         self.__csv = csv
         self.kmdict, self.inhabitants = self.__sumkm()
 
-
-    def tokml(self):
+    def tokml(self, kmlfile):
         kml = simplekml.Kml()
         counter = 0
+        tilecache = CacheKM2WGS()
+        logging.info("Coordcachsize: {}".format(tilecache.size()))
         for k, v in self.kmdict.items():
             if counter % 1000 == 0:
                 logging.info("{} of {}".format(len(self.kmdict), counter))
             counter += 1
             polygon = kml.newpolygon(name=k)
-            lbe_lv95 = int("{}000".format(k[:4]))
-            lbn_lv95 = int("{}000".format(k[4:]))
+            lbe_lv95 = int(k[:4])
+            lbn_lv95 = int(k[4:])
             try:
-                lbe_wgs, lbn_wgs = self.__towgs84(lbe_lv95, lbn_lv95)
-                lte_wgs, ltn_wgs = self.__towgs84(lbe_lv95 + 1000, lbn_lv95)
-                rte_wgs, rtn_wgs = self.__towgs84(lbe_lv95 + 1000, lbn_lv95 + 1000)
-                rbe_wgs, rbn_wgs = self.__towgs84(lbe_lv95, lbn_lv95 + 1000)
+                lbe_wgs, lbn_wgs = tilecache.get(k)
+                lte_wgs, ltn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95))
+                rte_wgs, rtn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95 + 1))
+                rbe_wgs, rbn_wgs = tilecache.get("{}{}".format(lbe_lv95, lbn_lv95 + 1))
                 polygon.outerboundaryis = [(lbe_wgs, lbn_wgs), (lte_wgs, ltn_wgs), (rte_wgs, rtn_wgs), (rbe_wgs, rbn_wgs)]
                 polygon.style.polystyle.color = simplekml.Color.green
                 polygon.style.polystyle.fill = 1
-                polygon.extended_data = {"Anzahl Einwohner: ": v}
+                # polygon.extendeddata = {"Anzahl Einwohner: ": v}
             except Exception as e:
                 logging.error("{} - {}".format(k, v))
                 logging.error(e)
-        kml.save(r"D:\git\tools-drones\temp\polygon.kml")
-
-    def __towgs84(self, e, n):
-        baseurl = "https://geodesy.geo.admin.ch/reframe/lv95towgs84"
-        for idx in range(5):
-            params = {"easting": e, "northing": n, "format": "json"}
-            response = requests.get(baseurl, params=params)
-            if response.status_code == 200:
-                # Request was successful
-                data = response.json()
-                return data["easting"], data["northing"]
-            else:
-                logging.error("Request failed with status code: {} at {} {} try: {}".format(response.status_code, e, n, idx))
+        if os.path.isfile(kmlfile):
+            os.remove(kmlfile)
+        kml.save(kmlfile)
+        logging.info("Coordcachsize: {}".format(tilecache.size()))
+        tilecache.save()
 
     def __sumkm(self):
         kmdict = {}

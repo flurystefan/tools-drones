@@ -1,5 +1,10 @@
 {
     "loglevel": "INFO",
     "STAC_url": "https://data.geo.admin.ch/api/stac/v0.9",
-    "max_items_search": 10
+    "max_items_search": 10,
+    "LV95_WGS84_Cache_dir": "./cache",
+    "LV95_WGS84_Cache_name": "LV95TOWGS84",
+    "ReframeLV95ToWGS84":  "https://geodesy.geo.admin.ch/reframe/lv95towgs84",
+    "maxtriesReframe": 5,
+    "kmlfilename": "inhabitants.kml"
 }
