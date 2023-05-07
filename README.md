@@ -9,3 +9,4 @@ Geo-Tools for compliance of drones operation
 - conda activate d:\git\tools-drones\python
 - conda install -c conda-forge pystac
 - pip install pystac-client
+- pip install simplekml
