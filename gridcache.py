@@ -3,7 +3,7 @@ import logging
 import os.path
 import requests
 import json
-from zipfile import ZipFile
+import zipfile
 from config import get_config
 
 
@@ -33,13 +33,13 @@ class CacheKM2WGS:
     def save(self):
         with open(self.cachefile, "w") as write_file:
             json.dump(self.__cache, write_file, indent=4)
-        with ZipFile(self.cachezipfile, mode="w") as archive:
-            archive.write(self.cachefile, os.path.basename(self.cachefile))
+        with zipfile.ZipFile(self.cachezipfile, mode="w") as archive:
+            archive.write(self.cachefile, os.path.basename(self.cachefile), compress_type=zipfile.ZIP_DEFLATED)
         os.remove(self.cachefile)
 
     def __loadcache(self):
         if os.path.isfile(self.cachezipfile):
-            zf = ZipFile(self.cachezipfile, "r")
+            zf = zipfile.ZipFile(self.cachezipfile, "r")
             zf.extractall(self.cfg["LV95_WGS84_Cache_dir"])
             zf.close()
         if os.path.isfile(self.cachefile):
