@@ -83,7 +83,7 @@ def run(cfg, key, outputpath):
     csv = inh.download(outputpath)
     if csv:
         logging.info("File {} downloaded".format(csv))
-    csv = r"D:\git\tools-drones\temp\volkszaehlung-bevoelkerungsstatistik_einwohner_2021_2056.csv"
+    csv = r"D:\git\tools-drones\temp\sample.csv"
     kml = KmlInhabitants(csv)
     kml.tokml(os.path.join(outputpath, cfg["kmlfilename"]))
     pass

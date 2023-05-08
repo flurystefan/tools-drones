@@ -106,6 +106,7 @@ class KmlInhabitants:
 
     def tokml(self, kmlfile):
         kml = simplekml.Kml()
+        fol = kml.newfolder(name="Population (residents) per km^2")
         counter = 0
         tilecache = CacheKM2WGS()
         logging.info("Coordcachsize: {}".format(tilecache.size()))
@@ -113,7 +114,6 @@ class KmlInhabitants:
             if counter % 1000 == 0:
                 logging.info("{} of {}".format(len(self.kmdict), counter))
             counter += 1
-            polygon = kml.newpolygon(name=k)
             lbe_lv95 = int(k[:4])
             lbn_lv95 = int(k[4:])
             try:
@@ -121,10 +121,10 @@ class KmlInhabitants:
                 lte_wgs, ltn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95))
                 rte_wgs, rtn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95 + 1))
                 rbe_wgs, rbn_wgs = tilecache.get("{}{}".format(lbe_lv95, lbn_lv95 + 1))
-                polygon.outerboundaryis = [(lbe_wgs, lbn_wgs), (lte_wgs, ltn_wgs), (rte_wgs, rtn_wgs), (rbe_wgs, rbn_wgs)]
-                polygon.style.polystyle.color = simplekml.Color.green
-                polygon.style.polystyle.fill = 1
-                # polygon.extendeddata = {"Anzahl Einwohner: ": v}
+                pol = kml.newpolygon(name=v, description="Number of residents : {}".format(v))
+                pol.outerboundaryis = [(lbe_wgs, lbn_wgs), (lte_wgs, ltn_wgs), (rte_wgs, rtn_wgs), (rbe_wgs, rbn_wgs)]
+                pol.style.polystyle.color = simplekml.Color.green
+                pol.style.polystyle.fill = 1
             except Exception as e:
                 logging.error("{} - {}".format(k, v))
                 logging.error(e)
