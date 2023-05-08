@@ -104,7 +104,8 @@ class KmlInhabitants:
         self.__csv = csv
         self.kmdict, self.inhabitants = self.__sumkm()
 
-    def tokml(self, kmlfile):
+    def tokml(self, kmlfile, grouping):
+        groupingdict = self.__getlimitdict(grouping)
         kml = simplekml.Kml()
         fol = kml.newfolder(name="Population (residents) per km^2")
         counter = 0
@@ -123,7 +124,8 @@ class KmlInhabitants:
                 rbe_wgs, rbn_wgs = tilecache.get("{}{}".format(lbe_lv95, lbn_lv95 + 1))
                 pol = kml.newpolygon(name=v, description="Number of residents : {}".format(v))
                 pol.outerboundaryis = [(lbe_wgs, lbn_wgs), (lte_wgs, ltn_wgs), (rte_wgs, rtn_wgs), (rbe_wgs, rbn_wgs)]
-                pol.style.polystyle.color = simplekml.Color.rgb(0, 0, 255)
+                colarr = self.__getcol(v, groupingdict)
+                pol.style.polystyle.color = simplekml.Color.rgb(int(colarr[0]), int(colarr[1]), int(colarr[2]))
                 pol.style.polystyle.fill = 1
             except Exception as e:
                 logging.error("{} - {}".format(k, v))
@@ -133,6 +135,14 @@ class KmlInhabitants:
         kml.save(kmlfile)
         logging.info("Coordcachsize: {}".format(tilecache.size()))
         tilecache.save()
+
+    def __getcol(self, inhabitant, groupingdict):
+        for k,v in groupingdict.items():
+            if inhabitant <= k:
+                return v.split(",")
+
+    def __getlimitdict(self, grouping):
+        return {25: '255,255,178', 250: '253,217,118', 2500: '254,178,67', 25000: '253,141,60', 250000: '240,59,32', 2500000: '189,0,38'}
 
     def __sumkm(self):
         kmdict = {}
