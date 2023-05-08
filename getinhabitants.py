@@ -123,7 +123,7 @@ class KmlInhabitants:
                 rbe_wgs, rbn_wgs = tilecache.get("{}{}".format(lbe_lv95, lbn_lv95 + 1))
                 pol = kml.newpolygon(name=v, description="Number of residents : {}".format(v))
                 pol.outerboundaryis = [(lbe_wgs, lbn_wgs), (lte_wgs, ltn_wgs), (rte_wgs, rtn_wgs), (rbe_wgs, rbn_wgs)]
-                pol.style.polystyle.color = simplekml.Color.green
+                pol.style.polystyle.color = simplekml.Color.rgb(0, 0, 255)
                 pol.style.polystyle.fill = 1
             except Exception as e:
                 logging.error("{} - {}".format(k, v))
