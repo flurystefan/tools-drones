@@ -12,8 +12,10 @@ class CacheKM2WGS:
     def __init__(self):
         self.cfg = get_config()
         self.__cache = {}
-        self.cachezipfile = os.path.join(self.cfg["LV95_WGS84_Cache_dir"], "{}.zip".format(self.cfg["LV95_WGS84_Cache_name"]))
-        self.cachefile = os.path.join(self.cfg["LV95_WGS84_Cache_dir"], "{}.json".format(self.cfg["LV95_WGS84_Cache_name"]))
+        self.cachezipfile = os.path.join(self.cfg["LV95_WGS84_Cache_dir"],
+                                         "{}.zip".format(self.cfg["LV95_WGS84_Cache_name"]))
+        self.cachefile = os.path.join(self.cfg["LV95_WGS84_Cache_dir"],
+                                      "{}.json".format(self.cfg["LV95_WGS84_Cache_name"]))
         self.__cache = self.__loadcache()
 
     def cache(self):
@@ -63,8 +65,9 @@ class CacheKM2WGS:
                     logging.debug("WGS84 easting {}, northing {}".format(data["easting"], data["northing"]))
                     return [data["easting"], data["northing"]]
                 else:
-                    logging.error("Request failed with status code: {} at {} {} try: {}".format(response.status_code, e, n, idx))
+                    logging.error(
+                        "Request failed with status code: {} at {} {} try: {}".format(response.status_code, e, n, idx)
+                    )
         except Exception as e:
-            logging.error("Max tries to reframe reached, return coord 0,0")
+            logging.error("Max tries to reframe reached, return coord 0,0. Errormsg = {}".format(e))
             return None
-

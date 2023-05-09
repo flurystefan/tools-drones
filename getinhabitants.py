@@ -6,6 +6,7 @@ import hashlib
 import simplekml
 from gridcache import CacheKM2WGS
 
+
 class STACInhabitants:
 
     def __init__(self, collection, asset_key, href_url, created, updated, timeofdata, epsg, checksum):
@@ -105,7 +106,7 @@ class KmlInhabitants:
     def tokml(self, kmlfile, grouping):
         groupingdict = self.__getlimitdict(grouping)
         kml = simplekml.Kml()
-        fol = kml.newfolder(name="Population (residents) per km^2")
+        kml.newfolder(name="Population (residents) per km^2")
         counter = 0
         tilecache = CacheKM2WGS()
         logging.info("Coordcachsize: {}".format(tilecache.size()))
@@ -134,17 +135,16 @@ class KmlInhabitants:
         logging.info("Coordcachsize: {}".format(tilecache.size()))
         tilecache.save()
 
-    def __getcol(self, inhabitant, groupingdict):
-        for k,v in groupingdict.items():
+    @staticmethod
+    def __getcol(inhabitant, groupingdict):
+        for k, v in groupingdict.items():
             if inhabitant <= k:
                 return v.split(",")
 
-    def __getlimitdict(self, grouping):
-        dict = {}
-        for k, v in grouping.items():
-            dict[int(k)] = v
-        return dict
-
+    @staticmethod
+    def __getlimitdict(grouping):
+        gdict = {int(k): v for k, v in grouping.items()}
+        return {k: gdict[k] for k in sorted(gdict)}
 
     def __sumkm(self):
         kmdict = {}
