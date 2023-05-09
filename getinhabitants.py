@@ -5,8 +5,6 @@ import os
 import hashlib
 import simplekml
 from gridcache import CacheKM2WGS
-from config import get_config
-
 
 class STACInhabitants:
 
@@ -50,7 +48,7 @@ class STACapiInhabitants:
                 file_hash = self.__get_filehash(filename)
                 if file_hash == self.stac_inhabitants.checksum:
                     logging.info("File already downloaded and checksum is ok")
-                    return None
+                    return filename
                 else:
                     logging.info("File outdated")
                     os.remove(filename)
@@ -142,7 +140,11 @@ class KmlInhabitants:
                 return v.split(",")
 
     def __getlimitdict(self, grouping):
-        return {25: '255,255,178', 250: '253,217,118', 2500: '254,178,67', 25000: '253,141,60', 250000: '240,59,32', 2500000: '189,0,38'}
+        dict = {}
+        for k, v in grouping.items():
+            dict[int(k)] = v
+        return dict
+
 
     def __sumkm(self):
         kmdict = {}

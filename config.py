@@ -4,7 +4,6 @@ Module to load configuration files
 """
 
 import json
-import logging
 import os
 
 _CONFIG_FOLDER = "config"
@@ -51,33 +50,4 @@ def get_config(*additional_configs):
         json.load(open(file, "r", encoding='utf-8')) for file in config_files
         if os.path.exists(file)
     ]
-    return ConfigDict(merge_dict(*jsons))
-
-
-class ConfigDict:
-    """ Custom dict implementation to allow resolving key from parent """
-    def __init__(self, value_dict, parent=None):
-        self.__parent = None
-        if parent is not None:
-            if type(parent) is not ConfigDict:
-                raise TypeError("parent must be of type ConfigDict")
-            self.__parent = parent
-        for key, value in value_dict.items():
-            if type(value) is dict:
-                value_dict[key] = ConfigDict(value, self)
-        self.__dict = value_dict
-
-    def __repr__(self):
-        return repr(self.__dict)
-
-    def __getitem__(self, indices):
-        """ Resolve key in internal dict or fallback to parent """
-        if not isinstance(indices, str):
-            raise ("Only string indicies are supported")
-        if indices in self.__dict or self.__parent is None:
-            return self.__dict[indices]
-        logging.warning("Key '%s' not found in %s, falling back to parent", indices, self)
-        return self.__parent[indices]
-
-    def __contains__(self, key):
-        return self.__dict.__contains__(key)
+    return merge_dict(*jsons)
