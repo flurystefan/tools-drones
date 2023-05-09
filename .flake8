@@ -2,4 +2,4 @@
 # Error codes: https://pycodestyle.readthedocs.io/en/latest/intro.html#error-codes
 # E722:	do not use bare except, specify exception instead
 extend-ignore = E722
-max-line-length = 100
+max-line-length = 120
