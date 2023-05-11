@@ -10,3 +10,4 @@ Geo-Tools for compliance of drones operation
 - conda install -c conda-forge pystac
 - pip install pystac-client
 - pip install simplekml
+- pip install pandas

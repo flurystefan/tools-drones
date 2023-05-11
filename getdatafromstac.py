@@ -76,7 +76,7 @@ def parse_args():
         required=True,
         help="Output folder",
         nargs="*",
-        choices=["KML", "KMZ"]
+        choices=["KML", "KMZ", "CSV"]
     )
 
     return vars(parser.parse_args())
@@ -92,12 +92,17 @@ def run(cfg, key, outputpath, formate):
     csv = inh.download(outputpath)
     if csv:
         logging.info("File {} downloaded".format(csv))
+    km = KmResidents(csv)
     if "KML" in formate or "KMZ" in formate:
-        kml = KmResidents(csv)
         if "KML" in formate:
-            kml.tokml(os.path.join(outputpath, cfg["kmlfilename"]), cfg["grouping"])
+            km.tokml(os.path.join(outputpath, cfg["kmlfilename"]), cfg["grouping"])
         if "KMZ" in formate:
-            kml.tokml(os.path.join(outputpath, cfg["kmzfilename"]), cfg["grouping"])
+            km.tokml(os.path.join(outputpath, cfg["kmzfilename"]), cfg["grouping"])
+    if "CSV" in formate:
+        km.tocsv(os.path.join(outputpath, cfg["csvfilename"]))
+
+
+
 
 
 if __name__ == "__main__":
