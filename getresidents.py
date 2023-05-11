@@ -7,7 +7,7 @@ import simplekml
 from gridcache import CacheKM2WGS
 
 
-class STACInhabitants:
+class STACResidents:
 
     def __init__(self, collection, asset_key, href_url, created, updated, timeofdata, epsg, checksum):
         self.collection_name = collection
@@ -20,7 +20,7 @@ class STACInhabitants:
         self.checksum = checksum
 
 
-class STACapiInhabitants:
+class STACapiResidents:
     CSVHEADERLINE = '"RELI";"E_KOORD";"N_KOORD";"NUMMER";"CLASS"\n'
 
     def __init__(self, collection):
@@ -30,7 +30,7 @@ class STACapiInhabitants:
         self.first_item = self.__sortet_items[0]
         self.__first_item_assets = self.first_item.assets
         self.first_asset_key, self.first_asset_data = next(iter(self.__first_item_assets.items()))
-        self.stac_inhabitants = STACInhabitants(
+        self.stac_inhabitants = STACResidents(
             collection.title,
             self.first_asset_key,
             self.first_asset_data.href,
@@ -97,11 +97,11 @@ class STACapiInhabitants:
             return None
 
 
-class KmlInhabitants:
+class KmResidents:
 
     def __init__(self, csv):
         self.__csv = csv
-        self.kmdict, self.inhabitants = self.__sumkm()
+        self.kmdict, self.residents = self.__sumkm()
 
     def tokml(self, kmlfile, grouping):
         groupingdict = self.__getlimitdict(grouping)
@@ -136,9 +136,9 @@ class KmlInhabitants:
         tilecache.save()
 
     @staticmethod
-    def __getcol(inhabitant, groupingdict):
+    def __getcol(residents, groupingdict):
         for k, v in groupingdict.items():
-            if inhabitant <= k:
+            if residents <= k:
                 return v.split(",")
 
     @staticmethod
@@ -148,16 +148,16 @@ class KmlInhabitants:
 
     def __sumkm(self):
         kmdict = {}
-        inhabitants = 0
+        residents = 0
         with open(self.__csv) as csv:
             lines = csv.readlines()
             for idx in range(1, len(lines)):
                 linarr = lines[idx].split(";")
                 key = "{}{}".format(linarr[1][:4], linarr[2][:4])
                 val = int(linarr[3])
-                inhabitants += val
+                residents += val
                 if key in kmdict:
                     kmdict[key] += val
                 else:
                     kmdict[key] = val
-        return kmdict, inhabitants
+        return kmdict, residents
