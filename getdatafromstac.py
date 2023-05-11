@@ -70,10 +70,19 @@ def parse_args():
         required=True,
         help="Output folder",
     )
+    parser.add_argument(
+        "--format",
+        "-f",
+        required=True,
+        help="Output folder",
+        nargs="*",
+        choices=["KML", "KMZ"]
+    )
+
     return vars(parser.parse_args())
 
 
-def run(cfg, key, outputpath):
+def run(cfg, key, outputpath, formate):
     """ Main routine """
     client = Client.open(cfg["STAC_url"])
     logging.info("STAC {}".format(client.description))
@@ -83,10 +92,12 @@ def run(cfg, key, outputpath):
     csv = inh.download(outputpath)
     if csv:
         logging.info("File {} downloaded".format(csv))
-    # csv = r"D:\git\tools-drones\temp\volkszaehlung-bevoelkerungsstatistik_einwohner_2021_2056.csv"
-    kml = KmResidents(csv)
-    kml.tokml(os.path.join(outputpath, cfg["kmlfilename"]), cfg["grouping"])
-    pass
+    if "KML" in formate or "KMZ" in formate:
+        kml = KmResidents(csv)
+        if "KML" in formate:
+            kml.tokml(os.path.join(outputpath, cfg["kmlfilename"]), cfg["grouping"])
+        if "KMZ" in formate:
+            kml.tokml(os.path.join(outputpath, cfg["kmzfilename"]), cfg["grouping"])
 
 
 if __name__ == "__main__":
@@ -95,7 +106,7 @@ if __name__ == "__main__":
     _log = setup_logging(loglevel=_cfg["loglevel"])
     logging.info("Python version {0}".format(sys.version))
     try:
-        run(_cfg, _args["collection"], _args["output"])
+        run(_cfg, _args["collection"], _args["output"], _args["format"])
     except Exception as _exc:
         logging.fatal("An error occured executing checkch", exc_info=_exc)
     finally:

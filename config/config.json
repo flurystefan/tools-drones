@@ -6,7 +6,8 @@
     "LV95_WGS84_Cache_name": "LV95TOWGS84",
     "ReframeLV95ToWGS84":  "https://geodesy.geo.admin.ch/reframe/lv95towgs84",
     "maxtriesReframe": 5,
-    "kmlfilename": "inhabitants.kml",
+    "kmlfilename": "residents_km_tiles.kml",
+    "kmzfilename": "residents_km_tiles.kmz",
     "grouping": {
         "25": "255,255,178",
         "250": "253,217,118",

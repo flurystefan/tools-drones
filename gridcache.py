@@ -17,6 +17,7 @@ class CacheKM2WGS:
         self.cachefile = os.path.join(self.cfg["LV95_WGS84_Cache_dir"],
                                       "{}.json".format(self.cfg["LV95_WGS84_Cache_name"]))
         self.__cache = self.__loadcache()
+        self.__modifyed = False
 
     def cache(self):
         return self.__cache
@@ -30,13 +31,15 @@ class CacheKM2WGS:
             wgs84 = self.__towgs84(int(key[:4]) * 1000, int(key[-4:]) * 1000)
             if wgs84:
                 self.__cache[key] = wgs84
+                self.__modifyed = True
             return wgs84
 
     def save(self):
-        with open(self.cachefile, "w") as write_file:
-            json.dump(self.__cache, write_file, indent=4)
-        with zipfile.ZipFile(self.cachezipfile, mode="w") as archive:
-            archive.write(self.cachefile, os.path.basename(self.cachefile), compress_type=zipfile.ZIP_DEFLATED)
+        if self.__modifyed:
+            with open(self.cachefile, "w") as write_file:
+                json.dump(self.__cache, write_file, indent=4)
+            with zipfile.ZipFile(self.cachezipfile, mode="w") as archive:
+                archive.write(self.cachefile, os.path.basename(self.cachefile), compress_type=zipfile.ZIP_DEFLATED)
         os.remove(self.cachefile)
 
     def __loadcache(self):

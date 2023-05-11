@@ -131,7 +131,10 @@ class KmResidents:
                 logging.error(e)
         if os.path.isfile(kmlfile):
             os.remove(kmlfile)
-        kml.save(kmlfile)
+        if kmlfile.endswith(".kml"):
+            kml.save(kmlfile)
+        else:
+            kml.savekmz(kmlfile)
         logging.info("Coordcachsize: {}".format(tilecache.size()))
         tilecache.save()
 
