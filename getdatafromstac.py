@@ -5,7 +5,7 @@ import socket
 import os
 import logging
 import sys
-from getinhabitants import STACapiInhabitants, KmlInhabitants
+from getresidents import STACapiResidents, KmResidents
 from config import get_config
 from io import StringIO
 from argparse import ArgumentParser
@@ -79,12 +79,12 @@ def run(cfg, key, outputpath):
     logging.info("STAC {}".format(client.description))
     collection = client.get_collection(key)
 
-    inh = STACapiInhabitants(collection)
+    inh = STACapiResidents(collection)
     csv = inh.download(outputpath)
     if csv:
         logging.info("File {} downloaded".format(csv))
     # csv = r"D:\git\tools-drones\temp\volkszaehlung-bevoelkerungsstatistik_einwohner_2021_2056.csv"
-    kml = KmlInhabitants(csv)
+    kml = KmResidents(csv)
     kml.tokml(os.path.join(outputpath, cfg["kmlfilename"]), cfg["grouping"])
     pass
 
