@@ -108,7 +108,7 @@ class KmResidents:
     def __init__(self, csv):
         self.__csv = csv
         self.kmdict, self.residents = self.__sumkm()
-        self.__df = None
+        self.__df = self.__todf()
 
     def tokml(self, kmlfile, grouping):
         groupingdict = self.__getlimitdict(grouping)
@@ -148,13 +148,16 @@ class KmResidents:
         tilecache.save()
 
     def tocsv(self, csvfile):
-        if not self.__df:
-            self.__todf()
         self.__df.to_csv(csvfile, sep=";", index=False)
         logging.info("CSV {} written".format(csvfile))
 
+    def toxlsx(self, xlsxfile):
+        with pd.ExcelWriter(xlsxfile, engine="openpyxl") as writer:
+            self.__df.to_excel(writer, sheet_name="residents per km2", index=False)
+        logging.info("XLSX {} written".format(xlsxfile))
+
     def __todf(self):
-        self.__df = pd.DataFrame(columns=self.DF_COLS)
+        df = pd.DataFrame(columns=self.DF_COLS)
         tilecache = CacheKM2WGS()
         counter = 0
         for k, v in self.kmdict.items():
@@ -172,7 +175,8 @@ class KmResidents:
                         int(lbe_lv95 + 1) * 1000, lbn_lv95 * 1000, lte_wgs, ltn_wgs,
                         int(lbe_lv95 + 1) * 1000, int(lbn_lv95 + 1) * 1000, rte_wgs, rtn_wgs,
                         lbe_lv95 * 1000, int(lbn_lv95 + 1) * 1000, rbe_wgs, rbn_wgs]
-            self.__df.loc[len(self.__df)] = list_row
+            df.loc[len(df)] = list_row
+        return df
 
     @staticmethod
     def __getcol(residents, groupingdict):

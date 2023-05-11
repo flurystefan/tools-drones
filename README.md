@@ -11,3 +11,4 @@ Geo-Tools for compliance of drones operation
 - pip install pystac-client
 - pip install simplekml
 - pip install pandas
+- pip install openpyxl (Excel export)
