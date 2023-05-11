@@ -102,9 +102,6 @@ def run(cfg, key, outputpath, formate):
         km.tocsv(os.path.join(outputpath, cfg["csvfilename"]))
 
 
-
-
-
 if __name__ == "__main__":
     _args = parse_args()
     _cfg = get_config()
