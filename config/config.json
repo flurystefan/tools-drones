@@ -8,6 +8,7 @@
     "maxtriesReframe": 5,
     "kmlfilename": "residents_km_tiles.kml",
     "kmzfilename": "residents_km_tiles.kmz",
+    "csvfilename": "residents_km_tiles.csv",
     "grouping": {
         "25": "255,255,178",
         "250": "253,217,118",
@@ -16,4 +17,5 @@
         "250000": "240,59,32",
         "2500000": "189,0,38"
     }
+
 }
