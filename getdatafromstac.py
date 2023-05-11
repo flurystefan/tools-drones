@@ -76,7 +76,7 @@ def parse_args():
         required=True,
         help="Output folder",
         nargs="*",
-        choices=["KML", "KMZ", "CSV"]
+        choices=["KML", "KMZ", "CSV", "XLSX"]
     )
 
     return vars(parser.parse_args())
@@ -100,6 +100,8 @@ def run(cfg, key, outputpath, formate):
             km.tokml(os.path.join(outputpath, cfg["kmzfilename"]), cfg["grouping"])
     if "CSV" in formate:
         km.tocsv(os.path.join(outputpath, cfg["csvfilename"]))
+    if "XLSX" in formate:
+        km.toxlsx(os.path.join(outputpath, cfg["xlsxfilename"]))
 
 
 if __name__ == "__main__":
