@@ -93,11 +93,10 @@ def run(cfg, key, outputpath, formate):
     if csv:
         logging.info("File {} downloaded".format(csv))
     km = KmResidents(csv, cfg["grouping"])
-    if "KML" in formate or "KMZ" in formate:
-        if "KML" in formate:
-            km.tokml(os.path.join(outputpath, cfg["kmlfilename"]), cfg["grouping"])
-        if "KMZ" in formate:
-            km.tokml(os.path.join(outputpath, cfg["kmzfilename"]), cfg["grouping"])
+    if "KML" in formate:
+        km.tokml(os.path.join(outputpath, cfg["kmlfilename"]))
+    if "KMZ" in formate:
+        km.tokml(os.path.join(outputpath, cfg["kmzfilename"]))
     if "CSV" in formate:
         km.tocsv(os.path.join(outputpath, cfg["csvfilename"]))
     if "XLSX" in formate:
