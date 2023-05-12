@@ -92,7 +92,7 @@ def run(cfg, key, outputpath, formate):
     csv = inh.download(outputpath)
     if csv:
         logging.info("File {} downloaded".format(csv))
-    km = KmResidents(csv)
+    km = KmResidents(csv, cfg["grouping"])
     if "KML" in formate or "KMZ" in formate:
         if "KML" in formate:
             km.tokml(os.path.join(outputpath, cfg["kmlfilename"]), cfg["grouping"])

@@ -99,16 +99,16 @@ class STACapiResidents:
 
 
 class KmResidents:
-    DF_COLS = ["KEY_LB", "number of residents",
+    DF_COLS = ["KEY_LB", "number of residents", "CLASS", "RGB",
                "E_LB", "N_LB", "easting_LB", "northing_LB",
                "E_LT", "N_LT", "easting_LT", "northing_LT",
                "E_RT", "N_RT", "easting_RT", "northing_RT",
                "E_RB", "N_RB", "easting_RB", "northing_RB"]
 
-    def __init__(self, csv):
+    def __init__(self, csv, grouping):
         self.__csv = csv
         self.kmdict, self.residents = self.__sumkm()
-        self.__df = self.__todf()
+        self.__df = self.__todf(grouping)
 
     def tokml(self, kmlfile, grouping):
         groupingdict = self.__getlimitdict(grouping)
@@ -156,7 +156,8 @@ class KmResidents:
             self.__df.to_excel(writer, sheet_name="residents per km2", index=False)
         logging.info("XLSX {} written".format(xlsxfile))
 
-    def __todf(self):
+    def __todf(self, grouping):
+        groupingdict = self.__getlimitdict(grouping)
         df = pd.DataFrame(columns=self.DF_COLS)
         tilecache = CacheKM2WGS()
         counter = 0
@@ -170,7 +171,8 @@ class KmResidents:
             lte_wgs, ltn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95))
             rte_wgs, rtn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95 + 1))
             rbe_wgs, rbn_wgs = tilecache.get("{}{}".format(lbe_lv95, lbn_lv95 + 1))
-            list_row = [k, v,
+            classid, rgb = self.__getcol(v, groupingdict)
+            list_row = [k, v, "<={}".format(classid), rgb,
                         lbe_lv95 * 1000, lbn_lv95 * 1000, lbe_wgs, lbn_wgs,
                         int(lbe_lv95 + 1) * 1000, lbn_lv95 * 1000, lte_wgs, ltn_wgs,
                         int(lbe_lv95 + 1) * 1000, int(lbn_lv95 + 1) * 1000, rte_wgs, rtn_wgs,
@@ -182,7 +184,7 @@ class KmResidents:
     def __getcol(residents, groupingdict):
         for k, v in groupingdict.items():
             if residents <= k:
-                return v.split(",")
+                return k, v
 
     @staticmethod
     def __getlimitdict(grouping):
