@@ -99,53 +99,28 @@ class STACapiResidents:
 
 
 class KmResidents:
-    DF_COLS = ["KEY_LB", "number of residents",
+    DF_COLS = ["KEY_LB", "number_of_residents", "CLASS", "RGB",
                "E_LB", "N_LB", "easting_LB", "northing_LB",
                "E_LT", "N_LT", "easting_LT", "northing_LT",
                "E_RT", "N_RT", "easting_RT", "northing_RT",
                "E_RB", "N_RB", "easting_RB", "northing_RB"]
 
-    def __init__(self, csv):
+    def __init__(self, csv, grouping):
         self.__csv = csv
         self.kmdict, self.residents = self.__sumkm()
-        self.__df = self.__todf()
+        self.__df = self.__todf(grouping)
 
-    def tokml(self, kmlfile, grouping):
-        groupingdict = self.__getlimitdict(grouping)
-        kml = simplekml.Kml()
-        kml.newfolder(name="Population (residents) per km^2")
-        counter = 0
-        tilecache = CacheKM2WGS()
-        logging.info("Coordcachsize: {}".format(tilecache.size()))
-        for k, v in self.kmdict.items():
-            if counter % 1000 == 0:
-                logging.info("{} of {}".format(len(self.kmdict), counter))
-            counter += 1
-            lbe_lv95 = int(k[:4])
-            lbn_lv95 = int(k[4:])
-            try:
-                lbe_wgs, lbn_wgs = tilecache.get(k)
-                lte_wgs, ltn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95))
-                rte_wgs, rtn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95 + 1))
-                rbe_wgs, rbn_wgs = tilecache.get("{}{}".format(lbe_lv95, lbn_lv95 + 1))
-                pol = kml.newpolygon(name=v, description="Number of residents : {}".format(v))
-                pol.outerboundaryis = [(lbe_wgs, lbn_wgs), (lte_wgs, ltn_wgs), (rte_wgs, rtn_wgs), (rbe_wgs, rbn_wgs)]
-                colarr = self.__getcol(v, groupingdict)
-                pol.style.polystyle.color = simplekml.Color.rgb(int(colarr[0]), int(colarr[1]), int(colarr[2]))
-                pol.style.polystyle.fill = 1
-            except Exception as e:
-                logging.error("{} - {}".format(k, v))
-                logging.error(e)
+    def tokml(self, kmlfile):
         if os.path.isfile(kmlfile):
             os.remove(kmlfile)
-        if kmlfile.endswith(".kml"):
-            kml.save(kmlfile)
-            logging.info("KML {} written".format(kmlfile))
-        else:
-            kml.savekmz(kmlfile)
-            logging.info("KMZ {} written".format(kmlfile))
-        logging.info("Coordcachsize: {}".format(tilecache.size()))
-        tilecache.save()
+        self.__getkml().save(kmlfile)
+        logging.info("KML {} written".format(kmlfile))
+
+    def tokmz(self, kmzfile):
+        if os.path.isfile(kmzfile):
+            os.remove(kmzfile)
+        self.__getkml().savekmz(kmzfile)
+        logging.info("KML {} written".format(kmzfile))
 
     def tocsv(self, csvfile):
         self.__df.to_csv(csvfile, sep=";", index=False)
@@ -156,7 +131,23 @@ class KmResidents:
             self.__df.to_excel(writer, sheet_name="residents per km2", index=False)
         logging.info("XLSX {} written".format(xlsxfile))
 
-    def __todf(self):
+    def __getkml(self):
+        kml = simplekml.Kml()
+        kml.newfolder(name="Population (residents) per km^2")
+        for row in self.__df.itertuples():
+            colarr = row.RGB.split(",")
+            pol = kml.newpolygon(name=row.number_of_residents,
+                                 description="Number of residents : {}".format(row.number_of_residents))
+            pol.outerboundaryis = [(row.easting_LB, row.northing_LB),
+                                   (row.easting_LT, row.northing_LT),
+                                   (row.easting_RT, row.northing_RT),
+                                   (row.easting_RB, row.northing_RB)]
+            pol.style.polystyle.color = simplekml.Color.rgb(int(colarr[0]), int(colarr[1]), int(colarr[2]))
+            pol.style.polystyle.fill = 1
+        return kml
+
+    def __todf(self, grouping):
+        groupingdict = self.__getlimitdict(grouping)
         df = pd.DataFrame(columns=self.DF_COLS)
         tilecache = CacheKM2WGS()
         counter = 0
@@ -170,19 +161,21 @@ class KmResidents:
             lte_wgs, ltn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95))
             rte_wgs, rtn_wgs = tilecache.get("{}{}".format(lbe_lv95 + 1, lbn_lv95 + 1))
             rbe_wgs, rbn_wgs = tilecache.get("{}{}".format(lbe_lv95, lbn_lv95 + 1))
-            list_row = [k, v,
+            classid, rgb = self.__getcol(v, groupingdict)
+            list_row = [k, v, "<={}".format(classid), rgb,
                         lbe_lv95 * 1000, lbn_lv95 * 1000, lbe_wgs, lbn_wgs,
                         int(lbe_lv95 + 1) * 1000, lbn_lv95 * 1000, lte_wgs, ltn_wgs,
                         int(lbe_lv95 + 1) * 1000, int(lbn_lv95 + 1) * 1000, rte_wgs, rtn_wgs,
                         lbe_lv95 * 1000, int(lbn_lv95 + 1) * 1000, rbe_wgs, rbn_wgs]
             df.loc[len(df)] = list_row
+        tilecache.save()
         return df
 
     @staticmethod
     def __getcol(residents, groupingdict):
         for k, v in groupingdict.items():
             if residents <= k:
-                return v.split(",")
+                return k, v
 
     @staticmethod
     def __getlimitdict(grouping):
