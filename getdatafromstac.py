@@ -96,7 +96,7 @@ def run(cfg, key, outputpath, formate):
     if "KML" in formate:
         km.tokml(os.path.join(outputpath, cfg["kmlfilename"]))
     if "KMZ" in formate:
-        km.tokml(os.path.join(outputpath, cfg["kmzfilename"]))
+        km.tokmz(os.path.join(outputpath, cfg["kmzfilename"]))
     if "CSV" in formate:
         km.tocsv(os.path.join(outputpath, cfg["csvfilename"]))
     if "XLSX" in formate:
