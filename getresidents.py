@@ -137,11 +137,12 @@ class KmResidents:
         for row in self.__df.itertuples():
             colarr = row.RGB.split(",")
             pol = kml.newpolygon(name=row.number_of_residents,
-                                 description="Number of residents : {}".format(row.number_of_residents))
+                                 description="Number of residents: {}".format(row.number_of_residents))
             pol.outerboundaryis = [(row.easting_LB, row.northing_LB),
                                    (row.easting_LT, row.northing_LT),
                                    (row.easting_RT, row.northing_RT),
                                    (row.easting_RB, row.northing_RB)]
+            pol.name = row.KEY_LB
             pol.style.polystyle.color = simplekml.Color.rgb(int(colarr[0]), int(colarr[1]), int(colarr[2]))
             pol.style.polystyle.fill = 1
         return kml
