@@ -30,7 +30,7 @@ Geo-Tools for compliance of drones operation
 
 ## tools
 
-- tool-residents.py 
-  -c ch.bfs.volkszaehlung-bevoelkerungsstatistik_einwohner 
-  -o D:\git\tools-drones\temp 
-  -f KML KMZ
+tool-residents.py 
+-c ch.bfs.volkszaehlung-bevoelkerungsstatistik_einwohner 
+-o D:\git\tools-drones\temp 
+-f KML KMZ

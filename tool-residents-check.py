@@ -26,6 +26,7 @@ def readkml():
         coordinates = placemark.find('.//{http://www.opengis.net/kml/2.2}coordinates').text
         description = placemark.find('.//{http://www.opengis.net/kml/2.2}description').text
         kmldict[name] = {"description": description, "coordinates": coordinates.split(" ")}
+    print("Found {} polygons in the kml".format(len(kmldict)))
     return kmldict
 
 
@@ -113,9 +114,11 @@ def check(east_lv95, north_lv95, csvdata, kmldata, verbose=False):
 def run():
     kmldict = readkml()
     csvdata = pd.read_csv(CVS, delimiter=";")
+    print("Found {} lines in the csv".format(len(csvdata.index) - 1))
     indexarr = getindexarr(len(csvdata.index) - 1)
     errcounter = 0
     # check random
+    print("--------------------------------------------")
     print("Check random")
     for idx in indexarr:
         lv03idx = str(csvdata.loc[idx]["RELI"])
