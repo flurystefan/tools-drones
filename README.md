@@ -27,3 +27,10 @@ Geo-Tools for compliance of drones operation
   Copy the url into the field and connect
 - go to Share and you can use the Share link
   or open Embed and you can use the sniped for a iFrame
+
+## tools
+
+tool-residents.py
+-c ch.bfs.volkszaehlung-bevoelkerungsstatistik_einwohner
+-o D:\git\tools-drones\temp
+-f KML KMZ
