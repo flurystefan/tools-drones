@@ -10,6 +10,8 @@
     "kmzfilename": "residents_km_tiles.kmz",
     "csvfilename": "residents_km_tiles.csv",
     "xlsxfilename": "residents_km_tiles.xlsx",
+    "polygongeojson": "polygon.json",
+    "buffergeojson": "buffer.json",
     "grouping": {
         "25": "255,255,178",
         "250": "253,217,118",

@@ -12,6 +12,7 @@ Geo-Tools for compliance of drones operation
 - pip install simplekml
 - pip install pandas
 - pip install openpyxl (Excel export)
+- pip install geopandas (Buffer)
 
 ## share kml and use it in map.geo.admin.ch
 
