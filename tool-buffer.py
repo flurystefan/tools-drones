@@ -101,8 +101,8 @@ def run(cfg, polygon, inputformat, inputepsg, outputfolder, outputformat):
         gdf = buffer.kml2gdf(polygon, outputfolder)
 
         gdfb = GdfBuffer(gdf)
-
-        buffergdf = buffer.buffergdf(gdf)
+        gdfb.buffer(20)
+        gdfb.buffer_tokml(outputfolder)
     elif inputformat == "KMZ":
         logging.info("Not yet implemeted")
     else:

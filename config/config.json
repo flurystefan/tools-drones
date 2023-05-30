@@ -13,6 +13,7 @@
     "xlsxfilename": "residents_km_tiles.xlsx",
     "polygongeojson": "polygon.json",
     "buffergeojson": "buffer.json",
+    "bufferkml": "buffer.kml",
     "grouping": {
         "25": "255,255,178",
         "250": "253,217,118",
