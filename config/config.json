@@ -4,7 +4,8 @@
     "max_items_search": 10,
     "LV95_WGS84_Cache_dir": "./cache",
     "LV95_WGS84_Cache_name": "LV95TOWGS84",
-    "ReframeLV95ToWGS84":  "https://geodesy.geo.admin.ch/reframe/lv95towgs84",
+    "ReframeLV95ToWGS84": "https://geodesy.geo.admin.ch/reframe/lv95towgs84",
+    "ReframeWGS84ToLV95": "http://geodesy.geo.admin.ch/reframe/wgs84tolv95",
     "maxtriesReframe": 5,
     "kmlfilename": "residents_km_tiles.kml",
     "kmzfilename": "residents_km_tiles.kmz",
@@ -19,6 +20,6 @@
         "25000": "253,141,60",
         "250000": "240,59,32",
         "2500000": "189,0,38"
-    }
-
+    },
+    "epscodes": {"2056":  "CH1903+ / LV95", "4326": "WGS 84"}
 }

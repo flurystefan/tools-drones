@@ -6,11 +6,12 @@ import logging
 import os
 import socket
 import sys
+import buffer
+from buffer import GdfBuffer
 from io import StringIO
 from datetime import datetime as dt
 from argparse import ArgumentParser
 from config import get_config
-from buffer import KML
 
 
 def setup_logging(folder=None, loglevel="INFO"):
@@ -97,7 +98,11 @@ def parse_args():
 
 def run(cfg, polygon, inputformat, inputepsg, outputfolder, outputformat):
     if inputformat == "KML":
-        kml = KML(polygon, outputfolder)
+        gdf = buffer.kml2gdf(polygon, outputfolder)
+
+        gdfb = GdfBuffer(gdf)
+
+        buffergdf = buffer.buffergdf(gdf)
     elif inputformat == "KMZ":
         logging.info("Not yet implemeted")
     else:
