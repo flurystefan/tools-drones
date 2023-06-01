@@ -91,15 +91,14 @@ def parse_args():
         help="Output format",
         default="KML",
         nargs="*",
-        choices=["KML", "KMZ",]
+        choices=["KML", "KMZ"]
     )
     return vars(parser.parse_args())
 
 
-def run(cfg, polygon, inputformat, inputepsg, outputfolder, outputformat):
+def run(polygon, inputformat, outputfolder):
     if inputformat == "KML":
-        gdf = buffer.kml2gdf(polygon, outputfolder)
-
+        gdf = buffer.kml2gdf(polygon)
         gdfb = GdfBuffer(gdf)
         gdfb.buffer(20)
         gdfb.buffer_tokml(outputfolder)
@@ -115,7 +114,7 @@ if __name__ == "__main__":
     _log = setup_logging(loglevel=_cfg["loglevel"])
     logging.info("Python version {0}".format(sys.version))
     try:
-        run(_cfg, _args["polygon"], _args["inputformat"], _args["inputepsg"], _args["output"], _args["outputformat"])
+        run(_args["polygon"], _args["inputformat"], _args["output"])
     except Exception as _exc:
         logging.fatal("An error occured executing checkch", exc_info=_exc)
     finally:
