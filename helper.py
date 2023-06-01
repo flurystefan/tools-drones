@@ -61,5 +61,3 @@ class SwisstopoReframe:
         except Exception as ex:
             logging.error("Max tries to reframe reached, return coord 0,0. Errormsg = {}".format(ex))
             return None
-
-
