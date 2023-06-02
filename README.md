@@ -37,5 +37,5 @@ tool-residents.py
 -f KML KMZ
 
 tool-buffer.py
--p D:\git\tools-drones\temp\map.geo.admin.ch.kml 
+-p D:\git\tools-drones\temp\map.geo.admin.ch.kml
 -o D:\git\tools-drones\temp
