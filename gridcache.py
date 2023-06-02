@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 import logging
 import os.path
-import requests
 import json
 import zipfile
+from helper import SwisstopoReframe
 from config import get_config
 
 
@@ -28,7 +28,7 @@ class CacheKM2WGS:
             return self.__cache[key]
         else:
             logging.debug("Key not found")
-            wgs84 = self.__towgs84(int(key[:4]) * 1000, int(key[-4:]) * 1000)
+            wgs84 = SwisstopoReframe.viceversa(int(key[:4]) * 1000, int(key[-4:]) * 1000)
             if wgs84:
                 self.__cache[key] = wgs84
                 self.__modifyed = True
@@ -55,22 +55,3 @@ class CacheKM2WGS:
 
     def size(self):
         return len(self.__cache)
-
-    def __towgs84(self, e, n):
-        try:
-            logging.debug("LV95 E {}, N {}".format(e, n))
-            for idx in range(self.cfg["maxtriesReframe"]):
-                params = {"easting": e, "northing": n, "format": "json"}
-                response = requests.get(self.cfg["ReframeLV95ToWGS84"], params=params)
-                if response.status_code == 200:
-                    # Request was successful
-                    data = response.json()
-                    logging.debug("WGS84 easting {}, northing {}".format(data["easting"], data["northing"]))
-                    return [data["easting"], data["northing"]]
-                else:
-                    logging.error(
-                        "Request failed with status code: {} at {} {} try: {}".format(response.status_code, e, n, idx)
-                    )
-        except Exception as e:
-            logging.error("Max tries to reframe reached, return coord 0,0. Errormsg = {}".format(e))
-            return None
