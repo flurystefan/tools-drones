@@ -87,7 +87,7 @@ def parse_args():
     )
     parser.add_argument(
         "--outputformat",
-        "-of",
+        "-f",
         help="Output format",
         default="KML",
         nargs="*",
@@ -96,16 +96,19 @@ def parse_args():
     return vars(parser.parse_args())
 
 
-def run(polygon, inputformat, outputfolder):
+def run(polygon, inputformat, outputfolder, formate):
     if inputformat == "KML":
         gdf = buffer.kml2gdf(polygon)
         gdfb = GdfBuffer(gdf)
         gdfb.buffer(20)
-        gdfb.buffer_tokml(outputfolder)
     elif inputformat == "KMZ":
         logging.info("Not yet implemeted")
     else:
         logging.fatal("format {} not allowed".format(inputformat))
+    if "KML" in formate:
+        gdfb.buffer_tokml(outputfolder)
+    if "KMZ" in formate:
+        gdfb.buffer_tokmz(outputfolder)
 
 
 if __name__ == "__main__":
@@ -114,7 +117,7 @@ if __name__ == "__main__":
     _log = setup_logging(loglevel=_cfg["loglevel"])
     logging.info("Python version {0}".format(sys.version))
     try:
-        run(_args["polygon"], _args["inputformat"], _args["output"])
+        run(_args["polygon"], _args["inputformat"], _args["output"], _args["outputformat"])
     except Exception as _exc:
         logging.fatal("An error occured executing checkch", exc_info=_exc)
     finally:

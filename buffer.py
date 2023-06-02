@@ -50,21 +50,31 @@ class GdfBuffer:
     def buffer_tokml(self, folder):
         if self.__buffer4326 is not None:
             kmlfile = os.path.join(folder, self.cfg["bufferkml"])
-            kml = simplekml.Kml()
-            kml.newfolder(name="Buffer1")
-            pol = kml.newpolygon(name="Name des Buffers",
-                                 description="Beschreibung des Buffers")
-            boudary = []
-            for pt in self.__buffer4326.geometry[0].exterior.coords:
-                boudary.append(pt)
-            pol.outerboundaryis = boudary
-            pol.name = "Name"
-            pol.style.polystyle.color = simplekml.Color.rgb(200, 200, 200)
-            pol.style.polystyle.fill = 1
-            kml.save(kmlfile)
+            self.__tokml().save(kmlfile)
             logging.info("KML {} written".format(kmlfile))
         else:
             logging.error("No buffer to export")
+
+    def buffer_tokmz(self, folder):
+        if self.__buffer4326 is not None:
+            kmlfile = os.path.join(folder, self.cfg["bufferkmz"])
+            self.__tokml().savekmz(kmlfile)
+            logging.info("KMZ {} written".format(kmlfile))
+        else:
+            logging.error("No buffer to export")
+
+    def __tokml(self):
+        kml = simplekml.Kml()
+        kml.newfolder(name="Buffer1")
+        pol = kml.newpolygon(name="Name des Buffers", description="Beschreibung des Buffers")
+        boudary = []
+        for pt in self.__buffer4326.geometry[0].exterior.coords:
+            boudary.append(pt)
+        pol.outerboundaryis = boudary
+        pol.name = "Name"
+        pol.style.polystyle.color = simplekml.Color.rgb(200, 200, 200)
+        pol.style.polystyle.fill = 1
+        return kml
 
     def __checkgdf(self, gdf):
         msg = ""
