@@ -35,3 +35,7 @@ tool-residents.py
 -c ch.bfs.volkszaehlung-bevoelkerungsstatistik_einwohner
 -o D:\git\tools-drones\temp
 -f KML KMZ
+
+tool-buffer.py
+-p D:\git\tools-drones\temp\map.geo.admin.ch.kml
+-o D:\git\tools-drones\temp
