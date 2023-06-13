@@ -7,6 +7,7 @@ import os
 import socket
 import sys
 import buffer
+import helper
 from buffer import GdfBuffer
 from io import StringIO
 from datetime import datetime as dt
@@ -96,9 +97,22 @@ def parse_args():
     return vars(parser.parse_args())
 
 
-def run(polygon, inputformat, outputfolder, formate):
+def downloadkml(kmlfolder, polygon):
+    if polygon.startswith("https://map.geo.admin.ch"):
+        downloadurl = helper.get_kmlurl(polygon)
+    elif polygon.startswith("https://s.geo.admin.ch"):
+        url = helper.unshortenurl(polygon)
+        downloadurl = helper.get_kmlurl(url)
+    elif os.path.isfile(polygon):
+        return polygon
+    else:
+        raise FileNotFoundError("File not found {}".format(polygon))
+
+
+def run(cfg, polygon, inputformat, outputfolder, formate):
+    kmlfile = downloadkml(outputfolder, polygon)
     if inputformat == "KML":
-        gdf = buffer.kml2gdf(polygon)
+        gdf = buffer.kml2gdf(kmlfile)
         gdfb = GdfBuffer(gdf)
         gdfb.buffer(20)
     elif inputformat == "KMZ":
@@ -117,7 +131,7 @@ if __name__ == "__main__":
     _log = setup_logging(loglevel=_cfg["loglevel"])
     logging.info("Python version {0}".format(sys.version))
     try:
-        run(_args["polygon"], _args["inputformat"], _args["output"], _args["outputformat"])
+        run(_cfg, _args["polygon"], _args["inputformat"], _args["output"], _args["outputformat"])
     except Exception as _exc:
         logging.fatal("An error occured executing checkch", exc_info=_exc)
     finally:

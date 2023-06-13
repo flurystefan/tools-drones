@@ -2,6 +2,9 @@
 import logging
 import requests
 from config import get_config
+from urllib.parse import urlparse, unquote
+
+KMLSTARTSTRING = "KML||https:"
 
 
 class SwisstopoReframe:
@@ -59,3 +62,20 @@ class SwisstopoReframe:
         except Exception as ex:
             logging.error("Max tries to reframe reached, return coord 0,0. Errormsg = {}".format(ex))
             return None
+
+
+def get_kmlurl(url):
+    paresd_url = urlparse(url)
+    parameters = paresd_url.query
+    decoded_parameters = unquote(parameters)
+    if decoded_parameters.find(KMLSTARTSTRING) > 0:
+        helper = decoded_parameters[decoded_parameters.index(KMLSTARTSTRING) + 5:].split("&")
+        return "{}{}".format(helper[0], helper[1])
+
+
+def unshortenurl(shortened_url):
+    try:
+        response = requests.get(shortened_url)
+        return response.url
+    except Exception:
+        raise
