@@ -109,7 +109,8 @@ def downloadkml(polygon, kmlfile):
         return None
 
 
-def run(cfg, polygon, inputformat, outputfolder, formate):
+def run(cfg, polygon, inputformat, outputfolder, outputformate):
+    gdfb = None
     kmlfile = downloadkml(polygon, os.path.join(outputfolder, cfg["downloadfilename"] + ".kml"))
     if inputformat == "KML" and kmlfile:
         gdf = buffer.kml2gdf(kmlfile)
@@ -119,9 +120,9 @@ def run(cfg, polygon, inputformat, outputfolder, formate):
         logging.info("Not yet implemeted")
     else:
         logging.fatal("format {} not allowed".format(inputformat))
-    if "KML" in formate:
+    if "KML" in outputformate and gdfb:
         gdfb.buffer_tokml(outputfolder)
-    if "KMZ" in formate:
+    if "KMZ" in outputformate and gdfb:
         gdfb.buffer_tokmz(outputfolder)
 
 
