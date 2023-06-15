@@ -7,6 +7,7 @@ import os
 import socket
 import sys
 import buffer
+import helper
 from buffer import GdfBuffer
 from io import StringIO
 from datetime import datetime as dt
@@ -96,18 +97,32 @@ def parse_args():
     return vars(parser.parse_args())
 
 
-def run(polygon, inputformat, outputfolder, formate):
-    if inputformat == "KML":
-        gdf = buffer.kml2gdf(polygon)
+def downloadkml(polygon, kmlfile):
+    if polygon.startswith("https://map.geo.admin.ch"):
+        return helper.download(helper.get_kmlurl(polygon), kmlfile)
+    elif polygon.startswith("https://s.geo.admin.ch"):
+        return helper.download(helper.get_kmlurl(helper.unshortenurl(polygon)), kmlfile)
+    elif os.path.isfile(polygon):
+        return polygon
+    else:
+        logging.error("File not found {}".format(polygon))
+        return None
+
+
+def run(cfg, polygon, inputformat, outputfolder, outputformate):
+    gdfb = None
+    kmlfile = downloadkml(polygon, os.path.join(outputfolder, cfg["downloadfilename"] + ".kml"))
+    if inputformat == "KML" and kmlfile:
+        gdf = buffer.kml2gdf(kmlfile)
         gdfb = GdfBuffer(gdf)
         gdfb.buffer(20)
     elif inputformat == "KMZ":
         logging.info("Not yet implemeted")
     else:
         logging.fatal("format {} not allowed".format(inputformat))
-    if "KML" in formate:
+    if "KML" in outputformate and gdfb:
         gdfb.buffer_tokml(outputfolder)
-    if "KMZ" in formate:
+    if "KMZ" in outputformate and gdfb:
         gdfb.buffer_tokmz(outputfolder)
 
 
@@ -117,7 +132,7 @@ if __name__ == "__main__":
     _log = setup_logging(loglevel=_cfg["loglevel"])
     logging.info("Python version {0}".format(sys.version))
     try:
-        run(_args["polygon"], _args["inputformat"], _args["output"], _args["outputformat"])
+        run(_cfg, _args["polygon"], _args["inputformat"], _args["output"], _args["outputformat"])
     except Exception as _exc:
         logging.fatal("An error occured executing checkch", exc_info=_exc)
     finally:

@@ -15,6 +15,7 @@
     "buffergeojson": "buffer.json",
     "bufferkml": "buffer.kml",
     "bufferkmz": "buffer.kmz",
+    "downloadfilename": "download",
     "grouping": {
         "25": "255,255,178",
         "250": "253,217,118",
