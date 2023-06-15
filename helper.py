@@ -69,13 +69,25 @@ def get_kmlurl(url):
     parameters = paresd_url.query
     decoded_parameters = unquote(parameters)
     if decoded_parameters.find(KMLSTARTSTRING) > 0:
-        helper = decoded_parameters[decoded_parameters.index(KMLSTARTSTRING) + 5:].split("&")
-        return "{}{}".format(helper[0], helper[1])
+        return decoded_parameters[decoded_parameters.index(KMLSTARTSTRING) + 5:].split("&")[0]
 
 
 def unshortenurl(shortened_url):
     try:
         response = requests.get(shortened_url)
+        logging.info(response.url)
         return response.url
     except Exception:
         raise
+
+
+def download(src_url, dest_file):
+    response = requests.get(src_url)
+    if response.status_code == 200:
+        with open(dest_file, "wb") as file:
+            file.write(response.content)
+        logging.info("File {} downloaded successfully to {}".format(src_url, dest_file))
+        return dest_file
+    else:
+        logging.fatal("Failed to download the file from {} to {}.".format(src_url, dest_file))
+        return None

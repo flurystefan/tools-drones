@@ -97,21 +97,21 @@ def parse_args():
     return vars(parser.parse_args())
 
 
-def downloadkml(kmlfolder, polygon):
+def downloadkml(polygon, kmlfile):
     if polygon.startswith("https://map.geo.admin.ch"):
-        downloadurl = helper.get_kmlurl(polygon)
+        return helper.download(helper.get_kmlurl(polygon), kmlfile)
     elif polygon.startswith("https://s.geo.admin.ch"):
-        url = helper.unshortenurl(polygon)
-        downloadurl = helper.get_kmlurl(url)
+        return helper.download(helper.get_kmlurl(helper.unshortenurl(polygon)), kmlfile)
     elif os.path.isfile(polygon):
         return polygon
     else:
-        raise FileNotFoundError("File not found {}".format(polygon))
+        logging.error("File not found {}".format(polygon))
+        return None
 
 
 def run(cfg, polygon, inputformat, outputfolder, formate):
-    kmlfile = downloadkml(outputfolder, polygon)
-    if inputformat == "KML":
+    kmlfile = downloadkml(polygon, os.path.join(outputfolder, cfg["downloadfilename"] + ".kml"))
+    if inputformat == "KML" and kmlfile:
         gdf = buffer.kml2gdf(kmlfile)
         gdfb = GdfBuffer(gdf)
         gdfb.buffer(20)
