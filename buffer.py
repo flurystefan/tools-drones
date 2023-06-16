@@ -4,9 +4,23 @@ import os
 import fiona
 import simplekml
 import geopandas as gpd
+from grp import GroundRiskBuffer
 from helper import SwisstopoReframe
 from config import get_config
 from shapely.geometry import Polygon
+
+
+def kml2gdf(polygon):
+    if polygon.startswith("https"):
+        logging.info("Not yet implemeted")
+        return None
+    if os.path.isfile(polygon):
+        fiona.drvsupport.supported_drivers["KML"] = "rw"
+        return gpd.read_file(polygon, driver="KML")
+
+
+def get_ebscode_from_gdf(gdf):
+    return int(gdf.crs.srs.split(":")[1])
 
 
 class GdfBuffer:
@@ -104,16 +118,3 @@ class GdfBuffer:
         for point in polygon.exterior.coords:
             coordswgs84.append(SwisstopoReframe.lv95towgs84(point))
         return coordswgs84
-
-
-def kml2gdf(polygon):
-    if polygon.startswith("https"):
-        logging.info("Not yet implemeted")
-        return None
-    if os.path.isfile(polygon):
-        fiona.drvsupport.supported_drivers["KML"] = "rw"
-        return gpd.read_file(polygon, driver="KML")
-
-
-def get_ebscode_from_gdf(gdf):
-    return int(gdf.crs.srs.split(":")[1])

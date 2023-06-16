@@ -9,6 +9,7 @@ import sys
 import buffer
 import helper
 from buffer import GdfBuffer
+from grp import GroundRiskBuffer
 from io import StringIO
 from datetime import datetime as dt
 from argparse import ArgumentParser
@@ -113,9 +114,21 @@ def run(cfg, polygon, inputformat, outputfolder, outputformate):
     gdfb = None
     kmlfile = downloadkml(polygon, os.path.join(outputfolder, cfg["downloadfilename"] + ".kml"))
     if inputformat == "KML" and kmlfile:
+        # gdf = buffer.kml2gdf(kmlfile)
+        # gdfb = GdfBuffer(gdf)
+        # gdfb.buffer(20)
+
+        v0 = 5.00
+        cd = 0.90
+        hfg = 45.00
+        grb = GroundRiskBuffer(aircrafttype="fixed-wing")
+        sgrb = grb.get_sgrb(v0, cd, hfg)
+        logging.info(sgrb)
+
         gdf = buffer.kml2gdf(kmlfile)
         gdfb = GdfBuffer(gdf)
-        gdfb.buffer(20)
+        gdfb.buffer(sgrb)
+
     elif inputformat == "KMZ":
         logging.info("Not yet implemeted")
     else:

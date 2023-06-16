@@ -18,8 +18,10 @@ CONST = {
 CURRENT_VERSION = "V2.0"
 AIRCRAFTTYPS = ["rotorcraft", "fixed-wing"]
 
+
 def torad(value):
     return value * math.pi / 180.0
+
 
 class GroundRiskBuffer:
 
