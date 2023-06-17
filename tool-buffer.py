@@ -8,8 +8,7 @@ import socket
 import sys
 import buffer
 import helper
-from buffer import GdfBuffer, ExportGRB
-from grb import GroundRiskBufferCalc
+from buffer import ExportGRB
 from io import StringIO
 from datetime import datetime as dt
 from argparse import ArgumentParser
@@ -130,7 +129,7 @@ def downloadkml(polygon, kmlfile):
 
 
 def run(cfg, polygon, inputformat, outputfolder, outputformate, v0, cd, hfg):
-    gdfb = None
+    exp = None
     kmlfile = downloadkml(polygon, os.path.join(outputfolder, cfg["downloadfilename"] + ".kml"))
     if inputformat == "KML" and kmlfile:
         exp = ExportGRB(buffer.kml2gdf(kmlfile), outputfolder, v0, cd, hfg)
@@ -139,10 +138,9 @@ def run(cfg, polygon, inputformat, outputfolder, outputformate, v0, cd, hfg):
     else:
         logging.fatal("format {} not allowed".format(inputformat))
     if "KML" in outputformate and exp:
-        # gdfb.buffer_tokml(outputfolder)
         exp.to_kml()
-    if "KMZ" in outputformate and gdfb:
-        gdfb.buffer_tokmz(outputfolder)
+    if "KMZ" in outputformate and exp:
+        logging.info("not yet implemented")
 
 
 if __name__ == "__main__":
