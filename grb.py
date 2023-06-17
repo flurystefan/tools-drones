@@ -23,7 +23,7 @@ def torad(value):
     return value * math.pi / 180.0
 
 
-class GroundRiskBuffer:
+class GroundRiskBufferCalc:
 
     def __init__(self, version="current", aircrafttype="rotorcraft"):
         try:

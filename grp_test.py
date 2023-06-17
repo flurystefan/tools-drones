@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from grp import GroundRiskBuffer
+from grb import GroundRiskBufferCalc
 
 aircrafts = ["rotorcraft", "fixed-wing"]
 
@@ -9,8 +9,8 @@ cd = 0.90
 hfg = 45.00
 
 
-grp_rotorcraft = GroundRiskBuffer()
-grp_fixedwing = GroundRiskBuffer(aircrafttype="fixed-wing")
+grp_rotorcraft = GroundRiskBufferCalc()
+grp_fixedwing = GroundRiskBufferCalc(aircrafttype="fixed-wing")
 print(grp_rotorcraft.get_srt(v0))
 print(grp_rotorcraft.get_scm(v0))
 print(grp_rotorcraft.get_hrt(v0))
