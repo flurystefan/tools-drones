@@ -140,7 +140,7 @@ def run(cfg, polygon, inputformat, outputfolder, outputformate, v0, cd, hfg):
     if "KML" in outputformate and exp:
         exp.to_kml()
     if "KMZ" in outputformate and exp:
-        logging.info("not yet implemented")
+        exp.to_kmz()
 
 
 if __name__ == "__main__":

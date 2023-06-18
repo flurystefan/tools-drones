@@ -68,9 +68,8 @@ class GdfBuffer:
         else:
             logging.error("No buffer to export")
 
-    def buffer_tokmz(self, folder):
+    def buffer_tokmz(self, kmlfile):
         if self.__buffer4326 is not None:
-            kmlfile = os.path.join(folder, self.cfg["bufferkmz"])
             self.__tokml().savekmz(kmlfile)
             logging.info("KMZ {} written".format(kmlfile))
         else:
@@ -141,3 +140,13 @@ class ExportGRB(GdfBuffer, GroundRiskBufferCalc):
         logging.info("Ground Risk Buffer")
         self.buffer(sgrb)
         self.buffer_tokml(os.path.join(self.output, "{}.kml".format(self.sgrb_name)))
+
+    def to_kmz(self):
+        svc = self.get_scv(self.v0)
+        sgrb = self.get_sgrb(self.v0, self.cd, self.hfg)
+        logging.info("Contingency Area")
+        self.buffer(svc)
+        self.buffer_tokmz(os.path.join(self.output, "{}.kmz".format(self.scv_name)))
+        logging.info("Ground Risk Buffer")
+        self.buffer(sgrb)
+        self.buffer_tokmz(os.path.join(self.output, "{}.kmz".format(self.sgrb_name)))
