@@ -43,14 +43,14 @@ output format
 tool-buffer.py
 more details to the parameter you will find in the methode parse_args()
 KML, local path or link to map.geo.admin.ch with draw
-   -p D:\git\tools-drones\temp\map.geo.admin.ch.kml 
+   -p D:\git\tools-drones\temp\map.geo.admin.ch.kml
 input format
    -if KML
-epsg code, https://epsg.io/
+[epsg code]"https://epsg.io/"
    -iepsg 4326
 output format
    -f KML
-drone wind speed 
+drone wind speed
    -v0 5.0
 characteristic dimension
    -cd 0.90
@@ -62,19 +62,24 @@ output folder
 ## environments
 
 There are several environments in which the tools or the functionalities are implied.
-There are also corresponding .yaml files available for the environments or they run with the installed 
+There are also corresponding .yaml files available for the environments 
+or they run with the installed
 Python standard environments for QGIS and ArcGIS Pro.
 
 ### commandline
+
 cmd_environment.yml
 -tool-residents
 -tool-buffer
 
 ### QGIS
+
 not yet available
 
 ### ArcGIS Pro
+
 not yet available
 
 ### NoGIS but GUI
+
 not yet available
