@@ -8,7 +8,7 @@ import socket
 import sys
 import buffer
 import helper
-from buffer import GdfBuffer
+from buffer import ExportGRB
 from io import StringIO
 from datetime import datetime as dt
 from argparse import ArgumentParser
@@ -81,12 +81,6 @@ def parse_args():
         choices=[4326, 2056]
     )
     parser.add_argument(
-        "--output",
-        "-o",
-        required=True,
-        help="Output folder",
-    )
-    parser.add_argument(
         "--outputformat",
         "-f",
         help="Output format",
@@ -94,6 +88,31 @@ def parse_args():
         nargs="*",
         choices=["KML", "KMZ"]
     )
+    parser.add_argument(
+        "--windspeed",
+        "-v0",
+        required=True,
+        help=" Maximum allowable wind speed for operation",
+    )
+    parser.add_argument(
+        "--characteristicdimension",
+        "-cd",
+        required=True,
+        help="Maximum UAS characteristic dimension",
+    )
+    parser.add_argument(
+        "--heightflithgeography",
+        "-hfg",
+        required=True,
+        help="The width of the Flight Geography is sufficient to conduct the operation in nominal conditions.",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        required=True,
+        help="Output folder",
+    )
+
     return vars(parser.parse_args())
 
 
@@ -109,21 +128,19 @@ def downloadkml(polygon, kmlfile):
         return None
 
 
-def run(cfg, polygon, inputformat, outputfolder, outputformate):
-    gdfb = None
+def run(cfg, polygon, inputformat, outputfolder, outputformate, v0, cd, hfg):
+    exp = None
     kmlfile = downloadkml(polygon, os.path.join(outputfolder, cfg["downloadfilename"] + ".kml"))
     if inputformat == "KML" and kmlfile:
-        gdf = buffer.kml2gdf(kmlfile)
-        gdfb = GdfBuffer(gdf)
-        gdfb.buffer(20)
+        exp = ExportGRB(buffer.kml2gdf(kmlfile), outputfolder, v0, cd, hfg)
     elif inputformat == "KMZ":
         logging.info("Not yet implemeted")
     else:
         logging.fatal("format {} not allowed".format(inputformat))
-    if "KML" in outputformate and gdfb:
-        gdfb.buffer_tokml(outputfolder)
-    if "KMZ" in outputformate and gdfb:
-        gdfb.buffer_tokmz(outputfolder)
+    if "KML" in outputformate and exp:
+        exp.to_kml()
+    if "KMZ" in outputformate and exp:
+        exp.to_kmz()
 
 
 if __name__ == "__main__":
@@ -132,7 +149,14 @@ if __name__ == "__main__":
     _log = setup_logging(loglevel=_cfg["loglevel"])
     logging.info("Python version {0}".format(sys.version))
     try:
-        run(_cfg, _args["polygon"], _args["inputformat"], _args["output"], _args["outputformat"])
+        run(_cfg,
+            _args["polygon"],
+            _args["inputformat"],
+            _args["output"],
+            _args["outputformat"],
+            float(_args["windspeed"]),
+            float(_args["characteristicdimension"]),
+            float(_args["heightflithgeography"]))
     except Exception as _exc:
         logging.fatal("An error occured executing checkch", exc_info=_exc)
     finally:
