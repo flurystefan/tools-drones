@@ -32,11 +32,54 @@ Geo-Tools for compliance of drones operation
 ## tools
 
 tool-residents.py
--c ch.bfs.volkszaehlung-bevoelkerungsstatistik_einwohner
--o D:\git\tools-drones\temp
--f KML KMZ
+more details to the parameter you will find in the methode parse_args()
+layer in map.geo.admin.ch
+   -c ch.bfs.volkszaehlung-bevoelkerungsstatistik_einwohner
+output folder
+   -o D:\git\tools-drones\temp
+output format
+   -f KML KMZ
 
 tool-buffer.py
--p D:\git\tools-drones\temp\map.geo.admin.ch.kml
--o D:\git\tools-drones\temp
--f KML KMZ
+more details to the parameter you will find in the methode parse_args()
+KML, local path or link to map.geo.admin.ch with draw
+   -p D:\git\tools-drones\temp\map.geo.admin.ch.kml
+input format
+   -if KML
+[epsg code]"https://epsg.io/"
+   -iepsg 4326
+output format
+   -f KML
+drone wind speed
+   -v0 5.0
+characteristic dimension
+   -cd 0.90
+height flight geography
+   -hfg 45.0
+output folder
+   -o D:\git\tools-drones\temp
+
+## environments
+
+There are several environments in which the tools or the functionalities are implied.
+There are also corresponding .yaml files available for the environments,
+or they run with the installed
+Python standard environments for QGIS and ArcGIS Pro.
+
+### commandline
+
+cmd_environment.yml
+-tool-residents
+-tool-buffer
+
+### QGIS
+
+not yet available
+
+### ArcGIS Pro
+
+not yet available
+
+### NoGIS but GUI
+
+not yet available
