@@ -62,7 +62,7 @@ output folder
 ## environments
 
 There are several environments in which the tools or the functionalities are implied.
-There are also corresponding .yaml files available for the environments 
+There are also corresponding .yaml files available for the environments,
 or they run with the installed
 Python standard environments for QGIS and ArcGIS Pro.
 
