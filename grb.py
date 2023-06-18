@@ -44,7 +44,7 @@ class GroundRiskBufferCalc:
         return 0.5 * (pow(v0, 2) / (self.const["g"] * math.tan(torad(self.const["roh"]))))
 
     def get_hrt(self, v0):
-        return (math.sqrt(2) / 2) *  v0 * self.const["trt"]
+        return (math.sqrt(2) / 2) * v0 * self.const["trt"]
 
     def get_hcm(self, v0):
         if self.aircrafttype == "rotorcraft":
