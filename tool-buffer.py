@@ -101,7 +101,7 @@ def parse_args():
         help="Maximum UAS characteristic dimension",
     )
     parser.add_argument(
-        "--heightflightgeography",
+        "--heightflithgeography",
         "-hfg",
         required=True,
         help="The width of the Flight Geography is sufficient to conduct the operation in nominal conditions.",
@@ -112,7 +112,6 @@ def parse_args():
         required=True,
         help="Output folder",
     )
-
     return vars(parser.parse_args())
 
 
