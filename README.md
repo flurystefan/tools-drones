@@ -20,10 +20,10 @@ Geo-Tools for compliance of drones operation
 - share the kml with anyone with the link  
 - take the part after/d/ to the next / (should be the id)  
   for example: 1_jkG6zlbKGRg1W4IaVd41JT3qJQjGCtI  
-  <https://drive.google.com/file/d/1_jkG6zlbKGRg1W4IaVd41JT3qJQjGCtI/view?usp=sharing>  
+  <https://drive.google.com/file/d/1_jkG6zlbKGRg1W4IaVd41JT3qJQjGCtI/view?usp=sharing>
 - the new url should look like  
   <https://drive.google.com/uc?export=download&id=> plus the id  
-  <https://drive.google.com/uc?export=download&id=1_jkG6zlbKGRg1W4IaVd41JT3qJQjGCtI>  
+  <https://drive.google.com/uc?export=download&id=1_jkG6zlbKGRg1W4IaVd41JT3qJQjGCtI>
   This url can be imported on map.geo.admin.ch in Advanced tools and Import.  
   Copy the url into the field and connect  
 - go to Share and you can use the Share link  
@@ -57,11 +57,11 @@ characteristic dimension
 height flight geography  
    -hfg 45.0  
 output folder  
-   -o D:\git\tools-drones\temp 
+   -o D:\git\tools-drones\temp  
 
 ## environments
 
-There are several environments in which the tools or the functionalities are implied.  
+There are several environments in which the tools or the functionalities are implied.
 There are also corresponding .yaml files available for the environments,  
 or they run with the installed  
 Python standard environments for QGIS and ArcGIS Pro.  
