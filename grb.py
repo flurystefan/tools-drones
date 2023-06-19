@@ -60,6 +60,6 @@ class GroundRiskBufferCalc:
 
     def get_sgrb(self, v0, cd, hfg):
         if self.aircrafttype == "rotorcraft":
-            return v0 * math.sqrt((2 * self.get_hcv(v0, hfg))/self.const["g"]) + 0.5 * cd
+            return self.get_scv(v0) + (v0 * math.sqrt((2 * self.get_hcv(v0, hfg))/self.const["g"]) + 0.5 * cd)
         else:
-            return self.get_hcv(v0, hfg) + 0.5 * cd
+            return self.get_scv(v0) + (self.get_hcv(v0, hfg) + 0.5 * cd)
