@@ -61,21 +61,21 @@ class GdfBuffer:
         polygon = Polygon(self.__2056to4326(self.__buffer2056.geometry[0]))
         self.__buffer4326 = gpd.GeoDataFrame(geometry=[polygon], crs=4326)
 
-    def buffer_tokml(self, kmlfile, buffer_name=None):
+    def buffer_tokml(self, kmlfile, buffer_name=None, fillcolor=None):
         if self.__buffer4326 is not None:
-            self.__tokml(buffer_name).save(kmlfile)
+            self.__tokml(buffer_name, fillcolor).save(kmlfile)
             logging.info("KML {} written".format(kmlfile))
         else:
             logging.error("No buffer to export")
 
-    def buffer_tokmz(self, kmlfile, buffer_name=None):
+    def buffer_tokmz(self, kmlfile, buffer_name=None, fillcolor=None):
         if self.__buffer4326 is not None:
-            self.__tokml(buffer_name).savekmz(kmlfile)
+            self.__tokml(buffer_name, fillcolor).savekmz(kmlfile)
             logging.info("KMZ {} written".format(kmlfile))
         else:
             logging.error("No buffer to export")
 
-    def __tokml(self, buffer_name):
+    def __tokml(self, buffer_name, fillcolor=None):
         kml = simplekml.Kml()
         if buffer_name:
             kml.newfolder(name=buffer_name)
@@ -87,7 +87,11 @@ class GdfBuffer:
             boudary.append(pt)
         pol.outerboundaryis = boudary
         pol.name = "Name"
-        pol.style.polystyle.color = simplekml.Color.rgb(200, 200, 200)
+        if fillcolor:
+            colarr = fillcolor.split(",")
+            pol.style.polystyle.color = simplekml.Color.rgb(int(colarr[0]), int(colarr[1]), int(colarr[2]))
+        else:
+            pol.style.polystyle.color = simplekml.Color.rgb(200, 200, 200)
         pol.style.polystyle.fill = 1
         return kml
 
@@ -139,17 +143,17 @@ class ExportGRB(GdfBuffer, GroundRiskBufferCalc):
         sgrb = self.get_sgrb(self.v0, self.cd, self.hfg)
         logging.info("Contingency Area")
         self.buffer(svc)
-        self.buffer_tokml(os.path.join(self.output, "{}.kml".format(self.scv_name)), "SVC")
+        self.buffer_tokml(os.path.join(self.output, "{}.kml".format(self.scv_name)), "SVC", self.cfg["scv"])
         logging.info("Ground Risk Buffer")
         self.buffer(sgrb)
-        self.buffer_tokml(os.path.join(self.output, "{}.kml".format(self.sgrb_name)), "SGRB")
+        self.buffer_tokml(os.path.join(self.output, "{}.kml".format(self.sgrb_name)), "SGRB", self.cfg["sgrb"])
 
     def to_kmz(self):
         svc = self.get_scv(self.v0)
         sgrb = self.get_sgrb(self.v0, self.cd, self.hfg)
         logging.info("Contingency Area")
         self.buffer(svc)
-        self.buffer_tokmz(os.path.join(self.output, "{}.kmz".format(self.scv_name)), "SVC")
+        self.buffer_tokmz(os.path.join(self.output, "{}.kmz".format(self.scv_name)), "SVC", self.cfg["scv"])
         logging.info("Ground Risk Buffer")
         self.buffer(sgrb)
-        self.buffer_tokmz(os.path.join(self.output, "{}.kmz".format(self.sgrb_name)), "SGRB")
+        self.buffer_tokmz(os.path.join(self.output, "{}.kmz".format(self.sgrb_name)), "SGRB", self.cfg["sgrb"])
