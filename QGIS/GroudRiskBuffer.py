@@ -96,7 +96,7 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         ca_polygon = self.parameterAsOutputLayer(parameters, self.ca, context)
-        
+
         v0 = self.parameterAsDouble(parameters, self.vo, context)
         cd = self.parameterAsDouble(parameters, self.cd, context)
         hfg = self.parameterAsDouble(parameters, self.hfg, context)
@@ -169,7 +169,6 @@ class ContingencyArea(QgsProcessingLayerPostProcessorInterface):
         renderer.setSymbol(symbol)
         layer.setRenderer(renderer)
 
-
     @staticmethod
     def create() -> 'ContingencyArea':
         ContingencyArea.instance = ContingencyArea()
@@ -179,7 +178,7 @@ class ContingencyArea(QgsProcessingLayerPostProcessorInterface):
 class GroundRiskBuffer(QgsProcessingLayerPostProcessorInterface):
 
     instance = None
-    ALPHACHANNEL = '128' # 50% transparenz
+    ALPHACHANNEL = '128'  # 50% transparenz
     FILLCOLOR = '221,57,39,{}'.format(ALPHACHANNEL)
     OUTLINECOLOR = '0,0,0,{}'.format(ALPHACHANNEL)
     OUTLINESTYPE = 'solid'
