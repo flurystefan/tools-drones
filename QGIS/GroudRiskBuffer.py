@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
-                       QgsProcessingException,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterVectorDestination,
                        QgsProcessingLayerPostProcessorInterface,
                        QgsVectorLayer,
-                       QgsFillSymbol,
-                       QgsSimpleFillSymbolLayer)
+                       QgsFillSymbol)
 from qgis import processing
-from PyQt5.QtGui import QColor
-import sys
 from grb import GroundRiskBufferCalc
 
 
@@ -60,29 +56,29 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-            self.vo,
-            'wind speed',
-            type=QgsProcessingParameterNumber.Double,
-            minValue=0.0,
-            defaultValue=0.0
+                self.vo,
+                'wind speed',
+                type=QgsProcessingParameterNumber.Double,
+                minValue=0.0,
+                defaultValue=0.0
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-            self.cd,
-            'characteristic dimension',
-            type=QgsProcessingParameterNumber.Double,
-            minValue=0.0,
-            defaultValue=0.0
+                self.cd,
+                'characteristic dimension',
+                type=QgsProcessingParameterNumber.Double,
+                minValue=0.0,
+                defaultValue=0.0
             )
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-            self.hfg,
-            'height flight geography',
-            type=QgsProcessingParameterNumber.Double,
-            minValue=0.0,
-            defaultValue=0.0
+                self.hfg,
+                'height flight geography',
+                type=QgsProcessingParameterNumber.Double,
+                minValue=0.0,
+                defaultValue=0.0
             )
         )
         self.addParameter(
@@ -109,7 +105,7 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
         grb_size = grb.get_sgrb(v0, cd, hfg)
         feedback.pushInfo('Contingency area buffer size {:0.2f} [m]'.format(scv_size))
         feedback.pushInfo('Ground Risk Buffer {:0.2f} [m]'.format(grb_size))
-        
+
         scv_buffered_layer = processing.run('native:buffer', {
             'INPUT': parameters['input'],
             'DISTANCE': scv_size,
@@ -120,7 +116,7 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
             'DISSOLVE': self.BUFFERDISSOLVE,
             'OUTPUT': ca_polygon
         }, is_child_algorithm=True, context=context, feedback=feedback)['OUTPUT']
-        
+
         grb_polygon = self.parameterAsOutputLayer(parameters, self.grb, context)
         grb_buffered_layer = processing.run('native:buffer', {
             'INPUT': parameters['input'],
@@ -132,7 +128,7 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
             'DISSOLVE': self.BUFFERDISSOLVE,
             'OUTPUT': grb_polygon
         }, is_child_algorithm=True, context=context, feedback=feedback)['OUTPUT']
-        
+
         if context.willLoadLayerOnCompletion(scv_buffered_layer):
             context.layerToLoadOnCompletionDetails(scv_buffered_layer).setPostProcessor(ContingencyArea.create())
 
@@ -140,11 +136,12 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
             context.layerToLoadOnCompletionDetails(grb_buffered_layer).setPostProcessor(GroundRiskBuffer.create())
 
         return {}
-        
+
+
 class ContingencyArea(QgsProcessingLayerPostProcessorInterface):
 
     instance = None
-    ALPHACHANNEL = '128' # 50% transparenz
+    ALPHACHANNEL = '128'  # 50% transparenz
     FILLCOLOR = '221,176,39,{}'.format(ALPHACHANNEL)
     OUTLINECOLOR = '0,0,0,{}'.format(ALPHACHANNEL)
     OUTLINESTYPE = 'solid'
@@ -155,10 +152,10 @@ class ContingencyArea(QgsProcessingLayerPostProcessorInterface):
     def postProcessLayer(self, layer, context, feedback):
         if not isinstance(layer, QgsVectorLayer):
             return
-            
+
         renderer = layer.renderer().clone()
-        
-        #colors are in RGB and Alpha (opacity) 255 opaque 0 is transparent
+
+        # colors are in RGB and Alpha (opacity) 255 opaque 0 is transparent
         feedback.pushInfo(self.FILLCOLOR)
         props = {}
         props['color'] = self.FILLCOLOR
@@ -172,11 +169,13 @@ class ContingencyArea(QgsProcessingLayerPostProcessorInterface):
         renderer.setSymbol(symbol)
         layer.setRenderer(renderer)
 
+
     @staticmethod
     def create() -> 'ContingencyArea':
         ContingencyArea.instance = ContingencyArea()
         return ContingencyArea.instance
-        
+
+
 class GroundRiskBuffer(QgsProcessingLayerPostProcessorInterface):
 
     instance = None
@@ -191,10 +190,10 @@ class GroundRiskBuffer(QgsProcessingLayerPostProcessorInterface):
     def postProcessLayer(self, layer, context, feedback):
         if not isinstance(layer, QgsVectorLayer):
             return
-            
+
         renderer = layer.renderer().clone()
-        
-        #colors are in RGB and Alpha (opacity) 255 opaque 0 is transparent
+
+        # colors are in RGB and Alpha (opacity) 255 opaque 0 is transparent
         feedback.pushInfo(self.FILLCOLOR)
         props = {}
         props['color'] = self.FILLCOLOR
