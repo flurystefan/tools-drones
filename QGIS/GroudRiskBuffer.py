@@ -57,7 +57,7 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.vo,
-                'wind speed',
+                'wind speed [m/s]',
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0.0,
                 defaultValue=0.0
@@ -66,7 +66,7 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.cd,
-                'characteristic dimension',
+                'characteristic dimension [m]',
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0.0,
                 defaultValue=0.0
@@ -75,7 +75,7 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.hfg,
-                'height flight geography',
+                'height flight geography [m AGL]',
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0.0,
                 defaultValue=0.0
