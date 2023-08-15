@@ -57,7 +57,7 @@ class ExampleProcessingAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterNumber(
                 self.vo,
-                'wind speed [m/s]',
+                'UAS speed [m/s]',
                 type=QgsProcessingParameterNumber.Double,
                 minValue=0.0,
                 defaultValue=0.0

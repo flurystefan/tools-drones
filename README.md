@@ -72,9 +72,10 @@ cmd_environment.yml
 -tool-residents  
 -tool-buffer  
 
-### QGIS
+### QGIS (Windows)
 
-not yet available  
+copy GroudRisBuffer.py to C:\Users\xxxxxxx\AppData\Roaming\QGIS\QGIS3\profiles\default\processing\scripts
+copy grb.py to c:\Users\xxxxxxx\AppData\Roaming\QGIS\QGIS3\profiles\default\python
 
 ### ArcGIS Pro
 
