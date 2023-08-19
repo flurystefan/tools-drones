@@ -1,5 +1,7 @@
 /.idea/
 /python/
+/arcgispro-py3-tools-drones/
+/AGP/
 /temp/
 *.log
 

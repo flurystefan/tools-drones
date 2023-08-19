@@ -79,7 +79,16 @@ copy grb.py to c:\Users\xxxxxxx\AppData\Roaming\QGIS\QGIS3\profiles\default\pyth
 
 ### ArcGIS Pro
 
-not yet available  
+clone arcgis env
+open command window in %ArcGisProInstallDir%\Pro\bin\Python\Scripts
+check whether the current conad env is identical with the cloned env. Use conda-env.exe list
+- conda install -c conda-forge pystac   
+open command window in %ActivePythonEnv%\Scripts
+- pip install pystac-client  
+- pip install simplekml  
+- pip install pandas  
+- pip install openpyxl (Excel export) 
+
 
 ### NoGIS but GUI
 
